@@ -2,6 +2,7 @@ import reactHooksPlugin from 'eslint-plugin-react-hooks'
 
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
 import noOnlyTestsPlugin from 'eslint-plugin-no-only-tests'
+import queryPlugin from '@tanstack/eslint-plugin-query'
 import perfectionist from 'eslint-plugin-perfectionist'
 import tsPlugin from '@typescript-eslint/eslint-plugin'
 import jsxA11yPlugin from 'eslint-plugin-jsx-a11y'
@@ -102,6 +103,7 @@ const eslintConfig = [
 		ignores: ['node_modules/**', '.next/**', 'out/**', 'build/**', 'next-env.d.ts'],
 	}, //	perfectionist.configs['recommended-natural'],
 	eslintPluginPrettierRecommended,
+	...queryPlugin.configs['flat/recommended'],
 	promisePlugin.configs['flat/recommended'], // Configuration pour JavaScript
 	{
 		rules: {
