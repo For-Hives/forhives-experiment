@@ -65,16 +65,32 @@ export default function DiagonalSlider({
 		const containerWidth = rect.width
 		const containerHeight = rect.height
 
-		// Calculate position along diagonal (top-left to bottom-right)
+		// Calculate position relative to container
 		const x = clientX - rect.left
 		const y = clientY - rect.top
+		
+		// Convert to percentage
+		const xPercent = (x / containerWidth) * 100
+		const yPercent = (y / containerHeight) * 100
 
-		// Project point onto diagonal line
-		const diagonalLength = Math.sqrt(containerWidth * containerWidth + containerHeight * containerHeight)
-		const dotProduct = (x * containerWidth + y * containerHeight) / diagonalLength
-		const percentage = Math.max(0, Math.min(100, (dotProduct / diagonalLength) * 100))
-
-		sliderPosition.set(percentage)
+		// For diagonal interaction, we need to find the closest point on our diagonal line
+		// The diagonal goes from (topX, 0) to (bottomX, 100) for any given slider position
+		// We'll solve for the position that minimizes distance to click point
+		
+		// Use a simple X-based approach since the user expects the handle to follow X movement
+		// But account for the visual offset created by getDiagonalPoints
+		let targetPosition = xPercent
+		
+		// Adjust for the visual centering: when handle appears at center, actual position should stay at 75
+		if (Math.abs(xPercent - 50) < 5) { // Click near center visually
+			// Keep the current position to avoid jumping
+			return
+		}
+		
+		// Clamp the result
+		targetPosition = Math.max(0, Math.min(100, targetPosition))
+		
+		sliderPosition.set(targetPosition)
 	}, [])
 
 	const handleMouseMove = useCallback(
