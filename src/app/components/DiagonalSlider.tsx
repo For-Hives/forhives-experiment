@@ -24,9 +24,9 @@ export default function DiagonalSlider({
 	const basePosition = 75 // Position de base de la diagonale
 	const sliderPosition = useMotionValue(basePosition)
 	const springPosition = useSpring(sliderPosition, {
-		stiffness: 400,
-		mass: 0.6,
-		damping: 25,
+		stiffness: 200,  // Reduced for more organic movement
+		mass: 0.8,      // Increased for more inertia
+		damping: 20,    // Reduced for more fluid motion
 	})
 
 	// Mouse position tracking
@@ -42,49 +42,61 @@ export default function DiagonalSlider({
 		}
 	}, [])
 
-	// Calculate organic repelling effect - more responsive across entire screen
+	// Calculate extended repelling effect across almost entire screen width
 	const calculateRepellingPosition = useCallback(
 		(mouseXPercent: number, mouseYPercent: number) => {
-			// Calculate the distance from mouse to the current diagonal line position
-			const currentDiagonalPoints = getDiagonalPoints(basePosition)
-			const diagonalCenterX = (currentDiagonalPoints.topX + currentDiagonalPoints.bottomX) / 2
-			const diagonalCenterY = 50 // Center of screen vertically
-
-			// Distance from mouse to diagonal center
-			const deltaX = mouseXPercent - diagonalCenterX
-			const deltaY = mouseYPercent - diagonalCenterY
-
-			// Calculate distance (simplified for performance)
-			const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
-
-			// More generous tolerance zone for better responsiveness
-			const toleranceZone = 25 // Increased from 15 to 25 for wider effect
+			// Define the active repelling zone - covers 80% of screen diagonally
+			const leftThreshold = 10  // 10% from left edge
+			const rightThreshold = 90 // 90% to right edge
 			
-			if (distance < toleranceZone) {
-				// Repelling strength based on distance
-				const repelStrength = (toleranceZone - distance) / toleranceZone
-				const maxRepel = 25 // Increased repel strength
-				
-				// Repel direction based on X position primarily (more intuitive)
-				let repelDirection = 0
-				if (Math.abs(deltaX) > Math.abs(deltaY)) {
-					// Horizontal repelling is stronger
-					repelDirection = deltaX > 0 ? -1 : 1 // Repel away from mouse
-				} else {
-					// Vertical influence on diagonal position
-					repelDirection = deltaY > 0 ? 1 : -1
-				}
-				
-				const repelAmount = repelStrength * maxRepel * repelDirection
-				return Math.max(20, Math.min(90, basePosition + repelAmount))
+			// Check if mouse is within the extended active zone
+			const isInActiveZone = mouseXPercent >= leftThreshold && mouseXPercent <= rightThreshold
+			
+			if (!isInActiveZone) {
+				// Outside active zone - gradual return to base
+				const currentPosition = sliderPosition.get()
+				const returnSpeed = 0.08
+				return currentPosition + (basePosition - currentPosition) * returnSpeed
 			}
 
-			// Gradual return to base position
-			const currentPosition = sliderPosition.get()
-			const returnSpeed = 0.1
-			return currentPosition + (basePosition - currentPosition) * returnSpeed
+			// Calculate repelling based on horizontal position primarily
+			// Map mouse X position to diagonal influence
+			const normalizedX = (mouseXPercent - leftThreshold) / (rightThreshold - leftThreshold)
+			
+			// Calculate vertical influence for organic feel
+			const verticalCenter = 50
+			const verticalInfluence = Math.abs(mouseYPercent - verticalCenter) / 50
+			
+			// Determine repelling direction and strength
+			let targetPosition = basePosition
+			
+			if (mouseXPercent < basePosition) {
+				// Mouse on left side - push diagonal right (increase position)
+				const leftDistance = (basePosition - mouseXPercent) / basePosition
+				const repelStrength = Math.min(1, leftDistance * 1.5) // Amplify for stronger effect
+				// Add vertical modulation for organic feel
+				const verticalModulation = 1 + (verticalInfluence * 0.4)
+				targetPosition = basePosition + (25 * repelStrength * verticalModulation)
+				
+			} else if (mouseXPercent > basePosition) {
+				// Mouse on right side - push diagonal left (decrease position) 
+				const rightDistance = (mouseXPercent - basePosition) / (100 - basePosition)
+				const repelStrength = Math.min(1, rightDistance * 1.5) // Amplify for stronger effect
+				// Add vertical modulation for organic feel
+				const verticalModulation = 1 + (verticalInfluence * 0.4)
+				targetPosition = basePosition - (20 * repelStrength * verticalModulation)
+			}
+			
+			// Add subtle vertical influence for more natural movement
+			if (Math.abs(mouseYPercent - verticalCenter) > 15) {
+				const verticalOffset = (mouseYPercent > verticalCenter ? 1 : -1) * verticalInfluence * 8
+				targetPosition += verticalOffset
+			}
+			
+			// Clamp to safe boundaries with extended range
+			return Math.max(10, Math.min(95, targetPosition))
 		},
-		[basePosition, getDiagonalPoints, sliderPosition]
+		[basePosition, sliderPosition]
 	)
 
 	// Handle mouse movement
