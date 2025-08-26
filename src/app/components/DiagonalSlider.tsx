@@ -22,7 +22,7 @@ export default function DiagonalSlider({
 	const containerRef = useRef<HTMLDivElement>(null)
 
 	// Motion values for smooth animations
-	const sliderPosition = useMotionValue(50)
+	const sliderPosition = useMotionValue(75) // Décalé vers la droite pour centrage diagonal
 	const springPosition = useSpring(sliderPosition, {
 		stiffness: 300,
 		mass: 0.8,
@@ -32,22 +32,21 @@ export default function DiagonalSlider({
 	// Transform values for animations
 	const handleScale = useTransform(springPosition, [0, 50, 100], [0.9, 1, 0.9])
 	const handleRotation = useTransform(springPosition, [0, 100], [-5, 5])
-	
+
 	// UNIFIED DIAGONAL GEOMETRY - Both line and mask use the same math
 	// True diagonal from top-left (0,0) to bottom-right (100,100)
 	const getDiagonalPoints = useCallback((position: number) => {
 		// Position represents progress along the diagonal (0-100%)
 		// Calculate the exact intersection points for a true diagonal line
-		const progress = position / 100
-		
+
 		// For a perfect diagonal, we need points that create a 45° line
 		// Top intersection: (position, 0)
 		// Bottom intersection: (position - diagonalOffset, 100)
 		const diagonalOffset = 50 // This creates the 45° angle
-		
+
 		return {
 			topX: position,
-			bottomX: Math.max(0, position - diagonalOffset)
+			bottomX: Math.max(0, position - diagonalOffset),
 		}
 	}, [])
 
@@ -194,17 +193,24 @@ export default function DiagonalSlider({
 				/>
 			</motion.svg>
 
-			{/* SVG Slider Handle - ON the diagonal line */}
+			{/* SVG Slider Handle - CENTERED on the diagonal line using same geometry */}
 			<motion.div
 				className="absolute z-20 cursor-grab active:cursor-grabbing"
 				style={{
 					y: '-50%',
 					x: '-50%',
-					// Position on the diagonal line - PERFECT alignment
-					top: useTransform(springPosition, value => `${100 - value}%`), // Diagonal Y position
+					top: useTransform(springPosition, value => {
+						// Y position at the center of the diagonal line (50% height)
+						return '50%'
+					}),
 					scale: handleScale,
 					rotate: handleRotation,
-					left: useTransform(springPosition, value => `${value}%`), // Diagonal X position
+					// Position at the CENTER of the diagonal line using the same getDiagonalPoints logic
+					left: useTransform(springPosition, value => {
+						const { topX, bottomX } = getDiagonalPoints(value)
+						// Calculate center point of the diagonal line
+						return `${(topX + bottomX) / 2}%`
+					}),
 				}}
 				onMouseDown={handleMouseDown}
 				onTouchStart={handleMouseDown}
