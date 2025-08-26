@@ -42,61 +42,79 @@ export default function DiagonalSlider({
 		}
 	}, [])
 
-	// Calculate extended repelling effect across almost entire screen width
+	// Calculate distance-based repelling effect - stronger when closer to actual diagonal line
 	const calculateRepellingPosition = useCallback(
 		(mouseXPercent: number, mouseYPercent: number) => {
-			// Define the active repelling zone - covers 80% of screen diagonally
-			const leftThreshold = 10  // 10% from left edge
-			const rightThreshold = 90 // 90% to right edge
+			const currentPosition = sliderPosition.get()
+			const currentDiagonalPoints = getDiagonalPoints(currentPosition)
 			
-			// Check if mouse is within the extended active zone
-			const isInActiveZone = mouseXPercent >= leftThreshold && mouseXPercent <= rightThreshold
+			// Calculate the closest point on the current diagonal line to the mouse
+			// Diagonal line goes from (topX, 0) to (bottomX, 100)
+			const lineStartX = currentDiagonalPoints.topX
+			const lineStartY = 0
+			const lineEndX = currentDiagonalPoints.bottomX
+			const lineEndY = 100
 			
-			if (!isInActiveZone) {
-				// Outside active zone - gradual return to base
-				const currentPosition = sliderPosition.get()
-				const returnSpeed = 0.08
+			// Vector from line start to end
+			const lineVecX = lineEndX - lineStartX
+			const lineVecY = lineEndY - lineStartY
+			const lineLength = Math.sqrt(lineVecX * lineVecX + lineVecY * lineVecY)
+			
+			// Normalized line vector
+			const lineUnitX = lineVecX / lineLength
+			const lineUnitY = lineVecY / lineLength
+			
+			// Vector from line start to mouse
+			const mouseVecX = mouseXPercent - lineStartX
+			const mouseVecY = mouseYPercent - lineStartY
+			
+			// Project mouse onto line to find closest point
+			const projection = Math.max(0, Math.min(lineLength, mouseVecX * lineUnitX + mouseVecY * lineUnitY))
+			const closestX = lineStartX + projection * lineUnitX
+			const closestY = lineStartY + projection * lineUnitY
+			
+			// Calculate distance from mouse to closest point on diagonal
+			const distanceToLine = Math.sqrt(
+				Math.pow(mouseXPercent - closestX, 2) + Math.pow(mouseYPercent - closestY, 2)
+			)
+			
+			// Define repelling zones with progressive intensity
+			const maxRepelDistance = 25 // Maximum distance for repelling effect
+			const minRepelDistance = 3  // Minimum distance for maximum repelling
+			
+			if (distanceToLine > maxRepelDistance) {
+				// Too far from line - gradual return to base
+				const returnSpeed = 0.06
 				return currentPosition + (basePosition - currentPosition) * returnSpeed
 			}
-
-			// Calculate repelling based on horizontal position primarily
-			// Map mouse X position to diagonal influence
-			const normalizedX = (mouseXPercent - leftThreshold) / (rightThreshold - leftThreshold)
 			
-			// Calculate vertical influence for organic feel
-			const verticalCenter = 50
-			const verticalInfluence = Math.abs(mouseYPercent - verticalCenter) / 50
+			// Calculate repelling intensity - exponentially stronger when closer
+			const normalizedDistance = Math.max(0, Math.min(1, 
+				(distanceToLine - minRepelDistance) / (maxRepelDistance - minRepelDistance)
+			))
 			
-			// Determine repelling direction and strength
-			let targetPosition = basePosition
+			// Use exponential curve for stronger repelling when close: (1-t)^3
+			const repelIntensity = 1 - Math.pow(normalizedDistance, 3)
 			
-			if (mouseXPercent < basePosition) {
-				// Mouse on left side - push diagonal right (increase position)
-				const leftDistance = (basePosition - mouseXPercent) / basePosition
-				const repelStrength = Math.min(1, leftDistance * 1.5) // Amplify for stronger effect
-				// Add vertical modulation for organic feel
-				const verticalModulation = 1 + (verticalInfluence * 0.4)
-				targetPosition = basePosition + (25 * repelStrength * verticalModulation)
-				
-			} else if (mouseXPercent > basePosition) {
-				// Mouse on right side - push diagonal left (decrease position) 
-				const rightDistance = (mouseXPercent - basePosition) / (100 - basePosition)
-				const repelStrength = Math.min(1, rightDistance * 1.5) // Amplify for stronger effect
-				// Add vertical modulation for organic feel
-				const verticalModulation = 1 + (verticalInfluence * 0.4)
-				targetPosition = basePosition - (20 * repelStrength * verticalModulation)
-			}
+			// Determine which side of the line the mouse is on
+			const cross = (mouseXPercent - lineStartX) * lineUnitY - (mouseYPercent - lineStartY) * lineUnitX
+			const isLeftSide = cross > 0
 			
-			// Add subtle vertical influence for more natural movement
-			if (Math.abs(mouseYPercent - verticalCenter) > 15) {
-				const verticalOffset = (mouseYPercent > verticalCenter ? 1 : -1) * verticalInfluence * 8
-				targetPosition += verticalOffset
-			}
+			// Calculate repelling direction and strength
+			const maxRepelAmount = 30 // Increased for stronger effect when close
+			const repelDirection = isLeftSide ? 1 : -1 // Push away from mouse
+			const repelAmount = repelIntensity * maxRepelAmount * repelDirection
 			
-			// Clamp to safe boundaries with extended range
-			return Math.max(10, Math.min(95, targetPosition))
+			// Add distance-based intensity boost for very close proximity
+			const proximityBoost = distanceToLine < 8 ? (8 - distanceToLine) / 8 * 1.5 : 0
+			const finalRepelAmount = repelAmount * (1 + proximityBoost)
+			
+			const targetPosition = basePosition + finalRepelAmount
+			
+			// Clamp to safe boundaries
+			return Math.max(5, Math.min(98, targetPosition))
 		},
-		[basePosition, sliderPosition]
+		[basePosition, sliderPosition, getDiagonalPoints]
 	)
 
 	// Handle mouse movement
