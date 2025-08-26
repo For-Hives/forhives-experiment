@@ -19,6 +19,7 @@ export default function DiagonalSlider({
 	afterAlt = 'After',
 }: DiagonalSliderProps) {
 	const [isDragging, setIsDragging] = useState(false)
+	const [dragStart, setDragStart] = useState<{ x: number; y: number; initialPosition: number } | null>(null)
 	const containerRef = useRef<HTMLDivElement>(null)
 
 	// Motion values for smooth animations
@@ -50,53 +51,71 @@ export default function DiagonalSlider({
 		}
 	}, [])
 
-	const handleMouseDown = useCallback(() => {
+	const handleMouseDown = useCallback((e: React.MouseEvent) => {
 		setIsDragging(true)
+		
+		// Store the initial drag position and current slider position
+		setDragStart({
+			x: e.clientX,
+			y: e.clientY,
+			initialPosition: sliderPosition.get()
+		})
 	}, [])
 
 	const handleMouseUp = useCallback(() => {
 		setIsDragging(false)
+		setDragStart(null)
 	}, [])
 
-	const updateSliderPosition = useCallback((clientX: number, clientY: number) => {
+	const updateSliderPosition = useCallback((clientX: number, clientY: number, isDrag = false) => {
 		if (!containerRef.current) return
 
 		const rect = containerRef.current.getBoundingClientRect()
 		const containerWidth = rect.width
 		const containerHeight = rect.height
 
-		// Calculate position relative to container
-		const x = clientX - rect.left
-		const y = clientY - rect.top
-		
-		// Convert to percentage
-		const xPercent = (x / containerWidth) * 100
-		const yPercent = (y / containerHeight) * 100
-
-		// For diagonal interaction, we need to find the closest point on our diagonal line
-		// The diagonal goes from (topX, 0) to (bottomX, 100) for any given slider position
-		// We'll solve for the position that minimizes distance to click point
-		
-		// Use a simple X-based approach since the user expects the handle to follow X movement
-		// But account for the visual offset created by getDiagonalPoints
-		let targetPosition = xPercent
-		
-		// Adjust for the visual centering: when handle appears at center, actual position should stay at 75
-		if (Math.abs(xPercent - 50) < 5) { // Click near center visually
-			// Keep the current position to avoid jumping
-			return
+		if (isDrag && dragStart) {
+			// For drag operations, use relative movement from drag start
+			const deltaX = clientX - dragStart.x
+			const deltaY = clientY - dragStart.y
+			
+			// Convert delta to percentage of container width (main interaction axis)
+			const deltaPercent = (deltaX / containerWidth) * 100
+			
+			// Apply delta to initial position
+			const newPosition = dragStart.initialPosition + deltaPercent
+			
+			// Clamp the result
+			const targetPosition = Math.max(0, Math.min(100, newPosition))
+			
+			sliderPosition.set(targetPosition)
+		} else {
+			// For click operations, use direct positioning
+			const x = clientX - rect.left
+			const y = clientY - rect.top
+			
+			// Convert to percentage
+			const xPercent = (x / containerWidth) * 100
+			
+			// Use X-based approach for clicks
+			let targetPosition = xPercent
+			
+			// Adjust for the visual centering: when clicking near center, keep current position
+			if (Math.abs(xPercent - 50) < 5) {
+				return
+			}
+			
+			// Clamp the result
+			targetPosition = Math.max(0, Math.min(100, targetPosition))
+			
+			sliderPosition.set(targetPosition)
 		}
-		
-		// Clamp the result
-		targetPosition = Math.max(0, Math.min(100, targetPosition))
-		
-		sliderPosition.set(targetPosition)
-	}, [])
+	}, [dragStart])
 
 	const handleMouseMove = useCallback(
 		(e: React.MouseEvent) => {
 			if (!isDragging) return
-			updateSliderPosition(e.clientX, e.clientY)
+			updateSliderPosition(e.clientX, e.clientY, true) // true = isDrag
 		},
 		[isDragging, updateSliderPosition]
 	)
@@ -105,14 +124,14 @@ export default function DiagonalSlider({
 		(e: React.TouchEvent) => {
 			if (!isDragging) return
 			const touch = e.touches[0]
-			updateSliderPosition(touch.clientX, touch.clientY)
+			updateSliderPosition(touch.clientX, touch.clientY, true) // true = isDrag
 		},
 		[isDragging, updateSliderPosition]
 	)
 
 	const handleClick = useCallback(
 		(e: React.MouseEvent) => {
-			updateSliderPosition(e.clientX, e.clientY)
+			updateSliderPosition(e.clientX, e.clientY, false) // false = isClick
 		},
 		[updateSliderPosition]
 	)
