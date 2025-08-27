@@ -23,14 +23,7 @@ export default function DiagonalSlider({
 	// Position states: 50% = center, 5% = show mostly right, 95% = show mostly left
 	const [position, setPosition] = useState(60)
 	const [hoverState, setHoverState] = useState<'center' | 'left' | 'right'>('center')
-	// Ultra organic spring for smooth transitions between states
-	const springDiagonal = useSpring(position, {
-		stiffness: 120,
-		damping: 20,
-		mass: 1.2,
-		restDelta: 0.001,
-		restSpeed: 0.001,
-	})
+	// Direct motion values for ultra-organic spring animation
 
 	// Simple hover system: left half vs right half
 	const handleMouseMove = (e: React.MouseEvent) => {
@@ -71,17 +64,25 @@ export default function DiagonalSlider({
 				<Image src={afterImage} alt={afterAlt} fill className="object-cover" unoptimized priority />
 			</div>
 
-			{/* Before Image with diagonal clip - direct position */}
-			<div
+			{/* Before Image with diagonal clip - motion animated */}
+			<motion.div
 				className="absolute inset-0"
-				style={{
+				animate={{
 					clipPath: `polygon(0% 0%, ${position}% 0%, ${Math.max(0, Math.min(100, position - 25))}% 100%, 0% 100%)`,
+				}}
+				transition={{
+					type: "spring",
+					stiffness: 120,
+					damping: 20,
+					mass: 1.2,
+					restDelta: 0.001,
+					restSpeed: 0.001,
 				}}
 			>
 				<Image src={beforeImage} alt={beforeAlt} fill className="object-cover" unoptimized priority />
-			</div>
+			</motion.div>
 
-			{/* Minimalist center border SVG - direct position */}
+			{/* Minimalist center border SVG - motion animated */}
 			<svg
 				className="pointer-events-none absolute inset-0 z-30"
 				width="100%"
@@ -90,25 +91,45 @@ export default function DiagonalSlider({
 				preserveAspectRatio="none"
 			>
 				{/* Main diagonal line */}
-				<line
-					x1={position}
+				<motion.line
+					animate={{
+						x1: position,
+						x2: Math.max(0, Math.min(100, position - 25)),
+					}}
 					y1={0}
-					x2={Math.max(0, Math.min(100, position - 25))}
 					y2={100}
 					stroke="white"
 					strokeWidth="0.3"
 					strokeOpacity="0.9"
+					transition={{
+						type: "spring",
+						stiffness: 120,
+						damping: 20,
+						mass: 1.2,
+						restDelta: 0.001,
+						restSpeed: 0.001,
+					}}
 				/>
 
 				{/* Subtle glow effect */}
-				<line
-					x1={position}
+				<motion.line
+					animate={{
+						x1: position,
+						x2: Math.max(0, Math.min(100, position - 25)),
+					}}
 					y1={0}
-					x2={Math.max(0, Math.min(100, position - 25))}
 					y2={100}
 					stroke="rgba(255,255,255,0.3)"
 					strokeWidth="0.6"
 					filter="blur(0.5px)"
+					transition={{
+						type: "spring",
+						stiffness: 120,
+						damping: 20,
+						mass: 1.2,
+						restDelta: 0.001,
+						restSpeed: 0.001,
+					}}
 				/>
 			</svg>
 
@@ -122,7 +143,7 @@ export default function DiagonalSlider({
 
 			{/* Debug indicator */}
 			<div className="pointer-events-none absolute bottom-6 left-6 z-60 rounded-lg bg-black/70 px-4 py-2 font-mono text-sm text-white">
-				State: {hoverState} | Position: {Math.round(position)}% | Spring: {Math.round(springDiagonal.get())}%
+				State: {hoverState} | Position: {Math.round(position)}%
 			</div>
 		</motion.div>
 	)
