@@ -1,26 +1,13 @@
 import DiagonalSlider from './components/DiagonalSlider'
-import HeroExample from './components/HeroExample'
+import HeroBreval from './components/HeroBreval'
+import HeroAndy from './components/HeroAndy'
 
 export default function Home() {
 	return (
 		<main className="min-h-screen">
 			<DiagonalSlider
-				leftComponent={
-					<HeroExample 
-						title="Portfolio 1"
-						subtitle="Creative Developer & Designer"
-						backgroundColor="#1a1a1a"
-						textColor="white"
-					/>
-				}
-				rightComponent={
-					<HeroExample 
-						title="Portfolio 2"
-						subtitle="Full Stack Engineer"
-						backgroundColor="#3b82f6"
-						textColor="white"
-					/>
-				}
+				leftComponent={<HeroBreval />}
+				rightComponent={<HeroAndy />}
 				// Fallback images si les composants ne se chargent pas
 				leftImage="/screens/bre.png"
 				rightImage="/screens/dydy.png"

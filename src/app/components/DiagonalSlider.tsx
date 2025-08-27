@@ -1,10 +1,10 @@
 'use client'
 
-import { motion, useSpring, useTransform } from 'motion/react'
 import { useRef, useState } from 'react'
+import { motion } from 'motion/react'
+import { ReactNode } from 'react'
 
 import Image from 'next/image'
-import { ReactNode } from 'react'
 
 interface DiagonalSliderProps {
 	leftComponent?: ReactNode
@@ -17,12 +17,12 @@ interface DiagonalSliderProps {
 }
 
 export default function DiagonalSlider({
-	leftComponent,
-	rightComponent,
-	leftImage,
 	rightImage,
-	leftAlt = 'Left Content',
+	rightComponent,
 	rightAlt = 'Right Content',
+	leftImage,
+	leftComponent,
+	leftAlt = 'Left Content',
 }: DiagonalSliderProps) {
 	const containerRef = useRef<HTMLDivElement>(null)
 
@@ -68,18 +68,10 @@ export default function DiagonalSlider({
 			{/* Right Component/Image - Base Layer */}
 			<div className="absolute inset-0 overflow-hidden">
 				<div className="h-full w-full">
-					{rightComponent || (
-						rightImage && (
-							<Image 
-								src={rightImage} 
-								alt={rightAlt} 
-								fill 
-								className="object-cover" 
-								unoptimized 
-								priority 
-							/>
-						)
-					)}
+					{rightComponent ??
+						(rightImage != null && (
+							<Image src={rightImage} alt={rightAlt} fill className="object-cover" unoptimized priority />
+						))}
 				</div>
 			</div>
 
@@ -90,27 +82,19 @@ export default function DiagonalSlider({
 					clipPath: `polygon(0% 0%, ${position}% 0%, ${Math.max(0, Math.min(100, position - 25))}% 100%, 0% 100%)`,
 				}}
 				transition={{
-					type: "spring",
+					type: 'spring',
 					stiffness: 120,
-					damping: 20,
-					mass: 1.2,
-					restDelta: 0.001,
 					restSpeed: 0.001,
+					restDelta: 0.001,
+					mass: 1.2,
+					damping: 20,
 				}}
 			>
 				<div className="h-full w-full">
-					{leftComponent || (
-						leftImage && (
-							<Image 
-								src={leftImage} 
-								alt={leftAlt} 
-								fill 
-								className="object-cover" 
-								unoptimized 
-								priority 
-							/>
-						)
-					)}
+					{leftComponent ??
+						(leftImage != null && (
+							<Image src={leftImage} alt={leftAlt} fill className="object-cover" unoptimized priority />
+						))}
 				</div>
 			</motion.div>
 
@@ -125,8 +109,8 @@ export default function DiagonalSlider({
 				{/* Main diagonal line */}
 				<motion.line
 					animate={{
-						x1: position,
 						x2: Math.max(0, Math.min(100, position - 25)),
+						x1: position,
 					}}
 					y1={0}
 					y2={100}
@@ -134,20 +118,20 @@ export default function DiagonalSlider({
 					strokeWidth="0.3"
 					strokeOpacity="0.9"
 					transition={{
-						type: "spring",
+						type: 'spring',
 						stiffness: 120,
-						damping: 20,
-						mass: 1.2,
-						restDelta: 0.001,
 						restSpeed: 0.001,
+						restDelta: 0.001,
+						mass: 1.2,
+						damping: 20,
 					}}
 				/>
 
 				{/* Subtle glow effect */}
 				<motion.line
 					animate={{
-						x1: position,
 						x2: Math.max(0, Math.min(100, position - 25)),
+						x1: position,
 					}}
 					y1={0}
 					y2={100}
@@ -155,28 +139,15 @@ export default function DiagonalSlider({
 					strokeWidth="0.6"
 					filter="blur(0.5px)"
 					transition={{
-						type: "spring",
+						type: 'spring',
 						stiffness: 120,
-						damping: 20,
-						mass: 1.2,
-						restDelta: 0.001,
 						restSpeed: 0.001,
+						restDelta: 0.001,
+						mass: 1.2,
+						damping: 20,
 					}}
 				/>
 			</svg>
-
-			{/* Labels */}
-			<div className="pointer-events-none absolute top-6 left-6 z-40 rounded-lg bg-black/50 px-3 py-2 text-sm font-medium text-white">
-				Left
-			</div>
-			<div className="pointer-events-none absolute top-6 right-6 z-40 rounded-lg bg-black/50 px-3 py-2 text-sm font-medium text-white">
-				Right
-			</div>
-
-			{/* Debug indicator */}
-			<div className="pointer-events-none absolute bottom-6 left-6 z-60 rounded-lg bg-black/70 px-4 py-2 font-mono text-sm text-white">
-				State: {hoverState} | Position: {Math.round(position)}%
-			</div>
 		</motion.div>
 	)
 }
