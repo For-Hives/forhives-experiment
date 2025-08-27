@@ -1,6 +1,6 @@
 'use client'
 
-import { motion, useSpring } from 'motion/react'
+import { motion, useSpring, useTransform } from 'motion/react'
 import { useRef, useState } from 'react'
 
 import Image from 'next/image'
@@ -71,21 +71,17 @@ export default function DiagonalSlider({
 				<Image src={afterImage} alt={afterAlt} fill className="object-cover" unoptimized priority />
 			</div>
 
-			{/* Before Image with diagonal clip - smooth spring transition */}
-			<motion.div
+			{/* Before Image with diagonal clip - direct position */}
+			<div
 				className="absolute inset-0"
 				style={{
-					clipPath: springDiagonal.to(value => {
-						const topX = value
-						const bottomX = Math.max(0, Math.min(100, value - 25))
-						return `polygon(0% 0%, ${topX}% 0%, ${bottomX}% 100%, 0% 100%)`
-					}),
+					clipPath: `polygon(0% 0%, ${position}% 0%, ${Math.max(0, Math.min(100, position - 25))}% 100%, 0% 100%)`,
 				}}
 			>
 				<Image src={beforeImage} alt={beforeAlt} fill className="object-cover" unoptimized priority />
-			</motion.div>
+			</div>
 
-			{/* Minimalist center border SVG - foundation for future crack effect */}
+			{/* Minimalist center border SVG - direct position */}
 			<svg
 				className="pointer-events-none absolute inset-0 z-30"
 				width="100%"
@@ -104,7 +100,7 @@ export default function DiagonalSlider({
 					strokeOpacity="0.9"
 				/>
 
-				{/* Subtle glow effect - foundation for future glass/crack animations */}
+				{/* Subtle glow effect */}
 				<line
 					x1={position}
 					y1={0}
