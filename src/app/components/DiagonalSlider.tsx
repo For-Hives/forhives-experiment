@@ -4,19 +4,25 @@ import { motion, useSpring, useTransform } from 'motion/react'
 import { useRef, useState } from 'react'
 
 import Image from 'next/image'
+import { ReactNode } from 'react'
 
 interface DiagonalSliderProps {
-	beforeImage: string
-	afterImage: string
-	beforeAlt?: string
-	afterAlt?: string
+	leftComponent?: ReactNode
+	rightComponent?: ReactNode
+	// Fallback images if no components provided
+	leftImage?: string
+	rightImage?: string
+	leftAlt?: string
+	rightAlt?: string
 }
 
 export default function DiagonalSlider({
-	beforeImage,
-	beforeAlt = 'Before',
-	afterImage,
-	afterAlt = 'After',
+	leftComponent,
+	rightComponent,
+	leftImage,
+	rightImage,
+	leftAlt = 'Left Content',
+	rightAlt = 'Right Content',
 }: DiagonalSliderProps) {
 	const containerRef = useRef<HTMLDivElement>(null)
 
@@ -59,14 +65,27 @@ export default function DiagonalSlider({
 			animate={{ opacity: 1 }}
 			transition={{ duration: 0.6 }}
 		>
-			{/* After Image */}
-			<div className="absolute inset-0">
-				<Image src={afterImage} alt={afterAlt} fill className="object-cover" unoptimized priority />
+			{/* Right Component/Image - Base Layer */}
+			<div className="absolute inset-0 overflow-hidden">
+				<div className="h-full w-full">
+					{rightComponent || (
+						rightImage && (
+							<Image 
+								src={rightImage} 
+								alt={rightAlt} 
+								fill 
+								className="object-cover" 
+								unoptimized 
+								priority 
+							/>
+						)
+					)}
+				</div>
 			</div>
 
-			{/* Before Image with diagonal clip - motion animated */}
+			{/* Left Component/Image - Clipped Layer */}
 			<motion.div
-				className="absolute inset-0"
+				className="absolute inset-0 overflow-hidden"
 				animate={{
 					clipPath: `polygon(0% 0%, ${position}% 0%, ${Math.max(0, Math.min(100, position - 25))}% 100%, 0% 100%)`,
 				}}
@@ -79,7 +98,20 @@ export default function DiagonalSlider({
 					restSpeed: 0.001,
 				}}
 			>
-				<Image src={beforeImage} alt={beforeAlt} fill className="object-cover" unoptimized priority />
+				<div className="h-full w-full">
+					{leftComponent || (
+						leftImage && (
+							<Image 
+								src={leftImage} 
+								alt={leftAlt} 
+								fill 
+								className="object-cover" 
+								unoptimized 
+								priority 
+							/>
+						)
+					)}
+				</div>
 			</motion.div>
 
 			{/* Minimalist center border SVG - motion animated */}
@@ -135,10 +167,10 @@ export default function DiagonalSlider({
 
 			{/* Labels */}
 			<div className="pointer-events-none absolute top-6 left-6 z-40 rounded-lg bg-black/50 px-3 py-2 text-sm font-medium text-white">
-				Avant
+				Left
 			</div>
 			<div className="pointer-events-none absolute top-6 right-6 z-40 rounded-lg bg-black/50 px-3 py-2 text-sm font-medium text-white">
-				Après
+				Right
 			</div>
 
 			{/* Debug indicator */}
