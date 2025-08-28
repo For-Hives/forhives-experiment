@@ -28,7 +28,6 @@ export default function DiagonalSlider({
 
 	// Position states: 50% = center, 5% = show mostly right, 95% = show mostly left
 	const [position, setPosition] = useState(60)
-	const [hoverState, setHoverState] = useState<'center' | 'left' | 'right'>('center')
 	// Direct motion values for ultra-organic spring animation
 
 	// Simple hover system: left half vs right half
@@ -41,17 +40,14 @@ export default function DiagonalSlider({
 		if (x < 50) {
 			// Hover left side - expand left image (push line to right)
 			setPosition(110) // Fixed position to show more left
-			setHoverState('left')
 		} else {
 			// Hover right side - expand right image (push line to left)
 			setPosition(20) // Fixed position to show more right
-			setHoverState('right')
 		}
 	}
 
 	const handleMouseLeave = () => {
 		setPosition(65) // Back to center
-		setHoverState('center')
 	}
 
 	return (
