@@ -53,6 +53,21 @@ export default function DiagonalSlider({
 		setPosition(60) // Back to center
 	}
 
+	// Calculate diagonal line geometry for the green div
+	const x1 = position
+	const x2 = Math.max(0, Math.min(100, position - 25))
+	const containerWidth = typeof window !== 'undefined' ? window.innerWidth : 1920
+	const containerHeight = typeof window !== 'undefined' ? window.innerHeight : 1080
+
+	const realX1 = (x1 / 100) * containerWidth
+	const realY1 = 0
+	const realX2 = (x2 / 100) * containerWidth
+	const realY2 = containerHeight
+
+	const angle = Math.atan2(realY2 - realY1, realX2 - realX1) * (180 / Math.PI)
+	const centerX = (realX1 + realX2) / 2
+	const centerY = (realY1 + realY2) / 2
+
 	return (
 		<motion.div
 			ref={containerRef}
@@ -98,12 +113,16 @@ export default function DiagonalSlider({
 			</motion.div>
 
 			<div
-				className="pointer-events-none absolute inset-0 z-50"
+				className="pointer-events-none absolute z-50"
 				style={{
-					transform: `translateX(${position}px)`,
+					transformOrigin: 'center',
+					transform: `translate(-50%, -50%) rotate(${angle}deg)`,
+					top: `${centerY}px`,
+					left: `${centerX}px`,
 				}}
 			>
-				<div className="mt-48 ml-22 h-10 w-full -rotate-[64.3deg] bg-green-500/25" />
+				<div className="h-10 w-screen bg-green-500/50" />
+				{/* Tu peux mettre n'importe quel contenu ici - il suivra parfaitement la ligne diagonale */}
 				{/* <ShaderCanvas className="h-full w-full" /> */}
 			</div>
 
