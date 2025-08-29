@@ -60,12 +60,28 @@ export default function RiveLoader() {
 
 		if (isStartedInput && isStaleInput && isLoadedInput && !isInitialized) {
 			console.log('Initializing Rive state machine inputs')
+			
+			// First, log current values
+			console.log('Current values BEFORE setting:', {
+				isStarted: isStartedInput.value,
+				isStale: isStaleInput.value,
+				isLoaded: isLoadedInput.value
+			})
 
-			// Set initial values
-			isStartedInput.value = true
+			// Set initial values - force them explicitly
+			isStartedInput.value = false  // Start with false
 			isStaleInput.value = false
 			isLoadedInput.value = false
-			console.log('First animation launched (isStarted = true)')
+			
+			// Wait a bit then set isStarted to true to trigger transition
+			setTimeout(() => {
+				isStartedInput.value = true
+				console.log('First animation launched (isStarted = true)', {
+					isStarted: isStartedInput.value,
+					isStale: isStaleInput.value,
+					isLoaded: isLoadedInput.value
+				})
+			}, 100)
 
 			setIsInitialized(true)
 
@@ -73,12 +89,17 @@ export default function RiveLoader() {
 			const staleTimer = setTimeout(() => {
 				console.log('7s elapsed - triggering stale animation (isStale = true)')
 				isStaleInput.value = true
+				console.log('Values after setting isStale:', {
+					isStarted: isStartedInput.value,
+					isStale: isStaleInput.value,
+					isLoaded: isLoadedInput.value
+				})
 				setCanCheckIsLoaded(true)
 			}, 7000)
 
 			return () => clearTimeout(staleTimer)
 		}
-	}, [isStartedInput, isStaleInput, isLoadedInput, isInitialized])
+	}, [isStartedInput, isStaleInput, isLoadedInput])
 
 	useEffect(() => {
 		// trigger this when the second animation is launched completely
@@ -92,11 +113,14 @@ export default function RiveLoader() {
 						console.log('Triggering final animation (isLoaded = true)')
 						isLoadedInput.value = true
 
-						// Launch "onLastAnimationCompleted" after 3s
+						// Wait 5s for final animation to complete, then wait 3s more before fade out
 						setTimeout(() => {
-							console.log('Starting fade out')
-							onLastAnimationCompleted()
-						}, 3000)
+							console.log('Final animation completed, waiting 3s more before fade out')
+							setTimeout(() => {
+								console.log('Starting fade out after final animation + 3s')
+								onLastAnimationCompleted()
+							}, 3000)
+						}, 5000)
 					}, 3000)
 
 					return () => clearTimeout(loadedTimer)
