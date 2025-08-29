@@ -111,16 +111,16 @@ export default function ShaderCanvas({ className = '' }: ShaderCanvasProps) {
         uv = uv * 2. -1.;  
        
         vec2 p = fragCoord.xy/iResolution.x;
-        vec3 p3 = vec3(p, iTime*0.4);    
+        vec3 p3 = vec3(p, iTime*0.25);    
           
         float intensity = noise(vec3(p3*12.0+12.0));
                                 
         float t = clamp((uv.x * -uv.x * 0.16) + 0.15, 0., 1.);                         
         float y = abs(intensity * -t + uv.y);
           
-        float g = pow(y, 0.2);
+        float g = pow(y, 0.18);
                                 
-        vec3 col = vec3(1.70, 1.48, 1.78);
+        vec3 col = vec3(2.0, 2.1, 2.3);
         col = col * -g + col;                    
         col = col * col;
         col = col * col;

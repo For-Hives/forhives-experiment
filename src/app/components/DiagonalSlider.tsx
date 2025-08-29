@@ -53,20 +53,25 @@ export default function DiagonalSlider({
 		setPosition(60) // Back to center
 	}
 
-	// Calculate diagonal line geometry for the green div
+	// Calculate diagonal line geometry for perfect overlay alignment
 	const x1 = position
 	const x2 = Math.max(0, Math.min(100, position - 25))
 	const containerWidth = typeof window !== 'undefined' ? window.innerWidth : 1920
 	const containerHeight = typeof window !== 'undefined' ? window.innerHeight : 1080
 
+	// Real coordinates in pixels
 	const realX1 = (x1 / 100) * containerWidth
 	const realY1 = 0
 	const realX2 = (x2 / 100) * containerWidth
 	const realY2 = containerHeight
 
+	// Calculate angle and positioning for perfect alignment
 	const angle = Math.atan2(realY2 - realY1, realX2 - realX1) * (180 / Math.PI)
-	const centerX = (realX1 + realX2) / 2
-	const centerY = (realY1 + realY2) / 2
+	const lineLength = Math.sqrt(Math.pow(realX2 - realX1, 2) + Math.pow(realY2 - realY1, 2))
+
+	// Position the overlay div at the start of the line (top point)
+	const overlayX = realX1
+	const overlayY = realY1
 
 	return (
 		<motion.div
@@ -115,9 +120,9 @@ export default function DiagonalSlider({
 			<motion.div
 				className="pointer-events-none absolute z-50"
 				animate={{
-					y: centerY,
+					y: overlayY,
+					x: overlayX,
 					rotate: angle,
-					left: `${centerX}px`,
 				}}
 				transition={{
 					type: 'spring',
@@ -128,12 +133,18 @@ export default function DiagonalSlider({
 					damping: 20,
 				}}
 				style={{
-					transformOrigin: 'center',
+					width: `${lineLength}px`,
+					transformOrigin: 'left center',
 				}}
 			>
-				<div className="h-10 w-screen bg-green-500/50" />
-				{/* Tu peux mettre n'importe quel contenu ici - il suivra parfaitement la ligne diagonale */}
-				{/* <ShaderCanvas className="h-full w-full" /> */}
+				<div className="h-8 w-[120vw] -translate-x-16 translate-y-2">
+					<div className="relative h-screen w-screen opacity-[98]">
+						<ShaderCanvas className="absolute inset-0 z-50 h-screen w-screen -translate-y-[48%] scale-110" />
+						<div className="absolute inset-0 z-50 h-screen w-screen -translate-y-[48%] scale-150">
+							<ShaderCanvas className="h-screen w-screen" />
+						</div>
+					</div>
+				</div>
 			</motion.div>
 
 			{/* Minimalist center border SVG - motion animated */}
