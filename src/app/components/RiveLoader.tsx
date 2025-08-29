@@ -12,7 +12,7 @@ interface RiveLoaderProps {
 	isPreloadComplete?: boolean // État du préchargement depuis le contexte
 }
 
-export default function RiveLoader({ onPreloadStart, onAnimationComplete, isPreloadComplete }: RiveLoaderProps) {
+export default function RiveLoader({ onAnimationComplete, isPreloadComplete }: RiveLoaderProps) {
 	const [isVisible, setIsVisible] = useState(true)
 	const [isCompletelyHidden, setIsCompletelyHidden] = useState(false)
 	// we use that one when the rive animation is launched, so we can check if the page is loaded
@@ -122,7 +122,7 @@ export default function RiveLoader({ onPreloadStart, onAnimationComplete, isPrel
 				const isPageReady = document.readyState === 'complete'
 				console.info('Checking readiness:', { isPreloadComplete, isPageReady })
 
-				if (isPageReady && isPreloadComplete) {
+				if (isPageReady && isPreloadComplete != null) {
 					console.info('Page and preload ready - triggering final animation immediately')
 					isLoadedInput.value = true
 
@@ -131,7 +131,7 @@ export default function RiveLoader({ onPreloadStart, onAnimationComplete, isPrel
 						console.info('Final animation completed - starting immediate fade out')
 						onLastAnimationCompleted()
 					}, 3000)
-				} else if (isPageReady && !isPreloadComplete) {
+				} else if (isPageReady && isPreloadComplete != null) {
 					console.info('Page ready but preload still in progress - waiting for preload')
 					// On attend que le préchargement soit terminé
 				} else {
@@ -147,9 +147,9 @@ export default function RiveLoader({ onPreloadStart, onAnimationComplete, isPrel
 
 	// Effect pour déclencher l'animation finale quand le préchargement se termine
 	useEffect(() => {
-		if (canCheckIsLoaded && isLoadedInput && isPreloadComplete && document.readyState === 'complete') {
+		if (canCheckIsLoaded && isLoadedInput && isPreloadComplete != null && document.readyState === 'complete') {
 			console.info('Preload just completed - checking if final animation should start')
-			if (!isLoadedInput.value) {
+			if (isLoadedInput.value == false) {
 				console.info('Triggering final animation now that preload is complete')
 				isLoadedInput.value = true
 

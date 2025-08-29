@@ -12,7 +12,7 @@ export function usePreloader({ images = [], delay = 1000 }: PreloaderOptions = {
 	const [isPreloadComplete, setIsPreloadComplete] = useState(false)
 
 	useEffect(() => {
-		let timeoutId: NodeJS.Timeout
+		let timeoutId: NodeJS.Timeout = null
 
 		const startPreloading = () => {
 			if (images.length === 0) {
@@ -33,12 +33,9 @@ export function usePreloader({ images = [], delay = 1000 }: PreloaderOptions = {
 
 			Promise.all(preloadPromises)
 				.then(() => {
-					console.info('All images preloaded successfully')
 					setIsPreloadComplete(true)
 				})
-				.catch(error => {
-					console.warn('Some images failed to preload:', error)
-					// On considère quand même le préchargement comme terminé
+				.catch(() => {
 					setIsPreloadComplete(true)
 				})
 				.finally(() => {
@@ -46,11 +43,10 @@ export function usePreloader({ images = [], delay = 1000 }: PreloaderOptions = {
 				})
 		}
 
-		// Commencer le préchargement après le délai spécifié
 		timeoutId = setTimeout(startPreloading, delay)
 
 		return () => {
-			if (timeoutId) {
+			if (timeoutId != null) {
 				clearTimeout(timeoutId)
 			}
 		}

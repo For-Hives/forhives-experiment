@@ -30,7 +30,7 @@ export function AnimationProvider({ children }: AnimationProviderProps) {
 	const [isRiveAnimationComplete, setIsRiveAnimationComplete] = useState(false)
 
 	// Précharger les iframes immédiatement quand l'app se charge
-	const { isPreloadComplete, loadedCount, totalCount } = useIframePreloader({
+	const { totalCount, loadedCount, isPreloadComplete } = useIframePreloader({
 		urls: ['https://andy-cinquin.com', 'https://brev.al'],
 		delay: 1000, // Commencer après 1s pour laisser Rive s'initialiser
 	})

@@ -27,7 +27,7 @@ export function useIframePreloader({ urls = [], delay = 1000 }: IframePreloaderO
 
 			// Créer des iframes cachées pour précharger
 			const preloadPromises = urls.map((url, index) => {
-				return new Promise<void>((resolve, reject) => {
+				return new Promise<void>(resolve => {
 					const iframe = document.createElement('iframe')
 					iframe.src = url
 					iframe.style.position = 'absolute'
@@ -37,12 +37,11 @@ export function useIframePreloader({ urls = [], delay = 1000 }: IframePreloaderO
 					iframe.style.height = '1px'
 					iframe.style.visibility = 'hidden'
 					iframe.style.opacity = '0'
-					
-					// Timeout de sécurité (15s max par iframe)
+
 					const timeout = setTimeout(() => {
 						console.warn(`Iframe preload timeout for ${url}`)
 						cleanup()
-						resolve() // On considère comme "chargé" même en cas de timeout
+						resolve()
 					}, 15000)
 
 					const cleanup = () => {
@@ -59,7 +58,7 @@ export function useIframePreloader({ urls = [], delay = 1000 }: IframePreloaderO
 						resolve()
 					}
 
-					iframe.onerror = (error) => {
+					iframe.onerror = error => {
 						console.warn(`Iframe preload failed for ${url}:`, error)
 						cleanup()
 						resolve() // On considère comme "chargé" même en cas d'erreur
@@ -90,12 +89,12 @@ export function useIframePreloader({ urls = [], delay = 1000 }: IframePreloaderO
 		timeoutId = setTimeout(startPreloading, delay)
 
 		return () => {
-			if (timeoutId) {
+			if (timeoutId != null) {
 				clearTimeout(timeoutId)
 			}
 			// Nettoyer les iframes si le composant est démonté
 			iframesRef.current.forEach(iframe => {
-				if (iframe && iframe.parentNode) {
+				if (iframe?.parentNode != null) {
 					iframe.parentNode.removeChild(iframe)
 				}
 			})
@@ -103,10 +102,10 @@ export function useIframePreloader({ urls = [], delay = 1000 }: IframePreloaderO
 	}, [urls, delay])
 
 	return {
-		isPreloading,
-		isPreloadComplete,
+		totalCount: urls.length,
 		loadedUrls,
 		loadedCount: loadedUrls.size,
-		totalCount: urls.length,
+		isPreloading,
+		isPreloadComplete,
 	}
 }
