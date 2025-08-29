@@ -8,7 +8,12 @@ const handPath =
 export default function AnimationExplanation() {
 	return (
 		<div className="">
-			<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" fill="none" viewBox="0 0 800 800">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				fill="none"
+				viewBox="0 0 800 800"
+				className="h-[100px] w-[100px] lg:h-[150px] lg:w-[150px]"
+			>
 				<path stroke="#fff" strokeWidth="20" d="m199.196 570.747 367-458" />
 				<motion.g
 					animate={{
