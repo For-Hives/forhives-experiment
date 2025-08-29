@@ -36,6 +36,8 @@ export function useIframePreloader({ urls = [], delay = 1000 }: IframePreloaderO
 					iframe.style.visibility = 'hidden'
 					iframe.style.opacity = '0'
 
+					let isCleanedUp = false
+
 					const timeout = setTimeout(() => {
 						console.warn(`Iframe preload timeout for ${url}`)
 						cleanup()
@@ -43,9 +45,17 @@ export function useIframePreloader({ urls = [], delay = 1000 }: IframePreloaderO
 					}, 15000)
 
 					const cleanup = () => {
+						if (isCleanedUp) return
+						isCleanedUp = true
+
 						clearTimeout(timeout)
-						if (iframe.parentNode) {
-							iframe.parentNode.removeChild(iframe)
+						try {
+							if (iframe.parentNode?.contains(iframe) === true) {
+								iframe.parentNode.removeChild(iframe)
+							}
+						} catch (error) {
+							// Silently handle the case where the node was already removed
+							console.debug(`Node already removed for ${url}:`, error)
 						}
 					}
 
@@ -88,10 +98,17 @@ export function useIframePreloader({ urls = [], delay = 1000 }: IframePreloaderO
 			clearTimeout(timeoutId)
 			// Clean up the iframes if the component is unmounted
 			iframesRef.current.forEach(iframe => {
-				if (iframe?.parentNode != null) {
-					iframe.parentNode.removeChild(iframe)
+				try {
+					if (iframe?.parentNode?.contains(iframe) === true) {
+						iframe.parentNode.removeChild(iframe)
+					}
+				} catch (error) {
+					// Silently handle the case where the node was already removed
+					console.debug('Node already removed during cleanup:', error)
 				}
 			})
+			// Clear the refs array
+			iframesRef.current = []
 		}
 	}, [urls, delay])
 
