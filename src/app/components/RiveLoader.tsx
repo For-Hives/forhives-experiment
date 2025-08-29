@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 
 export default function RiveLoader() {
 	const [isVisible, setIsVisible] = useState(true)
+	const [isCompletelyHidden, setIsCompletelyHidden] = useState(false)
 	// we use that one when the rive animation is launched, so we can check if the page is loaded
 	// but ONLY when the first and second animation are launched completely
 	// we don't want to trigger the animation before
@@ -138,6 +139,17 @@ export default function RiveLoader() {
 	const onLastAnimationCompleted = () => {
 		console.log('Hiding loader with fade out')
 		setIsVisible(false)
+		
+		// After fade transition completes (0.5s), remove from DOM completely
+		setTimeout(() => {
+			console.log('Removing loader from DOM completely')
+			setIsCompletelyHidden(true)
+		}, 500)
+	}
+
+	// Completely remove from DOM after fade out
+	if (isCompletelyHidden) {
+		return null
 	}
 
 	return (
