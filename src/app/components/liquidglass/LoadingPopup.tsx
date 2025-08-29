@@ -106,7 +106,7 @@ export const LoadingPopup: React.FC<LoadingPopupProps> = ({
 	)
 }
 
-// Hook utilitaire pour gérer l'état du loading
+// Utility hook to manage loading state
 export const useLoadingPopup = () => {
 	const [isLoading, setIsLoading] = React.useState(false)
 

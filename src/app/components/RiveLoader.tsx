@@ -16,9 +16,9 @@ interface RiveLoaderProps {
 export default function RiveLoader({ onRiveDisplayed, onAnimationComplete, isPreloadComplete }: RiveLoaderProps) {
 	const [isVisible, setIsVisible] = useState(true)
 	const [isCompletelyHidden, setIsCompletelyHidden] = useState(false)
-	// we use that one when the rive animation is launched, so we can check if the page is loaded
+	// We use this when the rive animation is launched, so we can check if the page is loaded
 	// but ONLY when the first and second animation are launched completely
-	// we don't want to trigger the animation before
+	// We don't want to trigger the animation before
 	const [canCheckIsLoaded, setCanCheckIsLoaded] = useState(false)
 
 	const { RiveComponent, rive } = useRive({
@@ -121,14 +121,14 @@ export default function RiveLoader({ onRiveDisplayed, onAnimationComplete, isPre
 	}, [isStartedInput, isStaleInput, isLoadedInput])
 
 	useEffect(() => {
-		// trigger this when the second animation is launched completely
+		// Trigger this when the second animation is launched completely
 		if (canCheckIsLoaded && isLoadedInput) {
-			// check if the page is loaded AND preload is complete
+			// Check if the page is loaded AND preload is complete
 			const checkReadyForFinalAnimation = () => {
 				const isPageReady = document.readyState === 'complete'
 				console.info('Checking readiness:', { isPreloadComplete, isPageReady })
 
-				if (isPageReady && isPreloadComplete != null) {
+				if (isPageReady && isPreloadComplete === true) {
 					console.info('Page and preload ready - triggering final animation immediately')
 					isLoadedInput.value = true
 
@@ -137,7 +137,7 @@ export default function RiveLoader({ onRiveDisplayed, onAnimationComplete, isPre
 						console.info('Final animation completed - starting immediate fade out')
 						onLastAnimationCompleted()
 					}, 3000)
-				} else if (isPageReady && isPreloadComplete != null) {
+				} else if (isPageReady && isPreloadComplete === false) {
 					console.info('Page ready but preload still in progress - waiting for preload')
 				} else {
 					// If page not loaded yet, wait for it
@@ -151,9 +151,9 @@ export default function RiveLoader({ onRiveDisplayed, onAnimationComplete, isPre
 	}, [canCheckIsLoaded, isLoadedInput, isPreloadComplete])
 
 	useEffect(() => {
-		if (canCheckIsLoaded && isLoadedInput && isPreloadComplete != null && document.readyState === 'complete') {
+		if (canCheckIsLoaded && isLoadedInput && isPreloadComplete === true && document.readyState === 'complete') {
 			console.info('Preload just completed - checking if final animation should start')
-			if (isLoadedInput.value == false) {
+			if (isLoadedInput.value === false) {
 				console.info('Triggering final animation now that preload is complete')
 				isLoadedInput.value = true
 

@@ -13,10 +13,10 @@ export default function Home() {
 			<DiagonalSlider
 				leftComponent={<HeroAndy />}
 				rightComponent={<HeroBreval />}
-				// Fallback images si les composants ne se chargent pas
+				// Fallback images if components don't load
 				leftImage="/screens/bre.png"
 				rightImage="/screens/dydy.png"
-				showShader={isPreloadComplete} // Activer le shader quand le préchargement est terminé
+				showShader={isPreloadComplete} // Enable shader when preloading is complete
 			/>
 		</main>
 	)
