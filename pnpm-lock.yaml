@@ -14,6 +14,9 @@ importers:
       '@rive-app/react-canvas':
         specifier: ^4.23.1
         version: 4.23.1(react@19.1.1)
+      '@rive-app/react-webgl2':
+        specifier: ^4.23.1
+        version: 4.23.1(react@19.1.1)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.83.1
         version: 5.83.1(eslint@9.34.0(jiti@2.5.1))(typescript@5.9.2)
@@ -436,6 +439,14 @@ packages:
     resolution: {integrity: sha512-ApnGXtnUkv3LslO8KloBwDQ9QEzhgjPBx6+jml5Caeeiu3svi5bkgiQaK9oqk8WU548vL+k09yVNIcqUWs1QNA==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0
+
+  '@rive-app/react-webgl2@4.23.1':
+    resolution: {integrity: sha512-DVhebXaT9oxzzoAIcpO0f3jhpqACQcuvWxwDOyfsJ0YNTLNYMN+8WqkR2YqjXuLl8Vp8+EUjxX9dfMHR6vXZYw==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0
+
+  '@rive-app/webgl2@2.31.2':
+    resolution: {integrity: sha512-09QCY6SdXBPZ8PwKTWD2ieEDJ67bPcjpuV+TQWdysFPNinzAhrQx7x0JaruYT2DIrzTX6ji0R8XscZI+pW3Gvw==}
 
   '@rtsao/scc@1.1.0':
     resolution: {integrity: sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==}
@@ -2461,6 +2472,13 @@ snapshots:
     dependencies:
       '@rive-app/canvas': 2.31.2
       react: 19.1.1
+
+  '@rive-app/react-webgl2@4.23.1(react@19.1.1)':
+    dependencies:
+      '@rive-app/webgl2': 2.31.2
+      react: 19.1.1
+
+  '@rive-app/webgl2@2.31.2': {}
 
   '@rtsao/scc@1.1.0': {}
 
