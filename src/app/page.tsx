@@ -6,8 +6,8 @@ export default function Home() {
 	return (
 		<main className="min-h-screen">
 			<DiagonalSlider
-				leftComponent={<HeroBreval />}
-				rightComponent={<HeroAndy />}
+				leftComponent={<HeroAndy />}
+				rightComponent={<HeroBreval />}
 				// Fallback images si les composants ne se chargent pas
 				leftImage="/screens/bre.png"
 				rightImage="/screens/dydy.png"
