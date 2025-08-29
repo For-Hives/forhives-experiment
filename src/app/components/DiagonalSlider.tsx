@@ -117,7 +117,7 @@ export default function DiagonalSlider({
 				</div>
 			</motion.div>
 
-			{/* <motion.div
+			<motion.div
 				className="pointer-events-none absolute z-20"
 				animate={{
 					y: overlayY,
@@ -145,7 +145,7 @@ export default function DiagonalSlider({
 						</div>
 					</div>
 				</div>
-			</motion.div> */}
+			</motion.div>
 
 			{/* Minimalist center border SVG - motion animated */}
 			<svg
