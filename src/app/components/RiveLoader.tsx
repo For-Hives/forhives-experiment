@@ -114,7 +114,7 @@ export default function RiveLoader({ onRiveDisplayed, onAnimationComplete, isPre
 		const checkIfReadyForEndAnimation = () => {
 			const idleDuration = Date.now() - idleStartTime
 			const isPageReady = document.readyState === 'complete'
-			const minimumIdleDuration = 3000 // Minimum 3 seconds in idle
+			const minimumIdleDuration = 4000 // Minimum 3 seconds in idle
 
 			console.info('🔍 Checking end animation readiness:', {
 				minimumRequired: `${minimumIdleDuration}ms`,
@@ -136,7 +136,7 @@ export default function RiveLoader({ onRiveDisplayed, onAnimationComplete, isPre
 					console.info('🎯 END animation complete (3s) - starting FADE UP')
 					setAnimationPhase('fade_up')
 					onLastAnimationCompleted()
-				}, 3000)
+				}, 5000)
 			} else if (idleDuration < minimumIdleDuration) {
 				// Wait for minimum idle duration
 				const remainingTime = minimumIdleDuration - idleDuration

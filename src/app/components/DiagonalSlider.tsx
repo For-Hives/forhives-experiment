@@ -291,7 +291,7 @@ export default function DiagonalSlider({
 
 			{/* Shader overlay */}
 			<motion.div
-				className="pointer-events-none absolute z-20 select-none"
+				className="absolute z-20 select-none"
 				animate={{
 					y: overlayY,
 					x: overlayX,
@@ -309,11 +309,10 @@ export default function DiagonalSlider({
 					width: `${lineLength}px`,
 					userSelect: 'none',
 					transformOrigin: 'left center',
-					pointerEvents: 'none',
 				}}
 			>
 				{showShader && (
-					<div className="pointer-events-none h-8 w-[120vw] -translate-x-16 translate-y-2">
+					<div className="h-8 w-[120vw] -translate-x-16 translate-y-2">
 						<div className="pointer-events-none relative h-screen w-screen opacity-[90]">
 							<div className="pointer-events-none absolute inset-0 z-20 h-screen w-[100vw] translate-x-[10%] -translate-y-[48%] scale-150 lg:w-screen lg:translate-x-0">
 								<ShaderCanvas className="pointer-events-none h-[100vh] w-[200vw]" />
