@@ -14,9 +14,7 @@ export function useIframePreloader({ urls = [], delay = 1000 }: IframePreloaderO
 	const iframesRef = useRef<HTMLIFrameElement[]>([])
 
 	useEffect(() => {
-		let timeoutId: NodeJS.Timeout
-
-		const startPreloading = () => {
+		const timeoutId = setTimeout(() => {
 			if (urls.length === 0) {
 				setIsPreloadComplete(true)
 				return
@@ -70,7 +68,8 @@ export function useIframePreloader({ urls = [], delay = 1000 }: IframePreloaderO
 				})
 			})
 
-			Promise.all(preloadPromises)
+			// Handle the Promise.all properly
+			void Promise.all(preloadPromises)
 				.then(() => {
 					console.info('All iframes preloaded successfully')
 					setIsPreloadComplete(true)
@@ -83,15 +82,10 @@ export function useIframePreloader({ urls = [], delay = 1000 }: IframePreloaderO
 				.finally(() => {
 					setIsPreloading(false)
 				})
-		}
-
-		// Commencer le préchargement après le délai spécifié
-		timeoutId = setTimeout(startPreloading, delay)
+		}, delay)
 
 		return () => {
-			if (timeoutId != null) {
-				clearTimeout(timeoutId)
-			}
+			clearTimeout(timeoutId)
 			// Nettoyer les iframes si le composant est démonté
 			iframesRef.current.forEach(iframe => {
 				if (iframe?.parentNode != null) {

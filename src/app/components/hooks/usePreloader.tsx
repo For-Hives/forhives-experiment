@@ -12,9 +12,7 @@ export function usePreloader({ images = [], delay = 1000 }: PreloaderOptions = {
 	const [isPreloadComplete, setIsPreloadComplete] = useState(false)
 
 	useEffect(() => {
-		let timeoutId: NodeJS.Timeout = null
-
-		const startPreloading = () => {
+		const timeoutId = setTimeout(() => {
 			if (images.length === 0) {
 				setIsPreloadComplete(true)
 				return
@@ -31,7 +29,8 @@ export function usePreloader({ images = [], delay = 1000 }: PreloaderOptions = {
 				})
 			})
 
-			Promise.all(preloadPromises)
+			// Handle the Promise.all properly
+			void Promise.all(preloadPromises)
 				.then(() => {
 					setIsPreloadComplete(true)
 				})
@@ -41,14 +40,10 @@ export function usePreloader({ images = [], delay = 1000 }: PreloaderOptions = {
 				.finally(() => {
 					setIsPreloading(false)
 				})
-		}
-
-		timeoutId = setTimeout(startPreloading, delay)
+		}, delay)
 
 		return () => {
-			if (timeoutId != null) {
-				clearTimeout(timeoutId)
-			}
+			clearTimeout(timeoutId)
 		}
 	}, [images, delay])
 
