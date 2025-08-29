@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 import { Geist, Geist_Mono } from 'next/font/google'
 
-import RiveLoader from './components/RiveLoader'
+import AppContent from './components/AppContent'
 
 import './globals.css'
 
@@ -30,8 +30,7 @@ export default function RootLayout({
 	return (
 		<html lang="en" className="bg-black">
 			<body className={`${geistSans.variable} ${geistMono.variable} bg-black antialiased`}>
-				<RiveLoader />
-				{children}
+				<AppContent>{children}</AppContent>
 			</body>
 		</html>
 	)

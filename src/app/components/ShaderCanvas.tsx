@@ -139,7 +139,7 @@ export default function ShaderCanvas({ className = '' }: ShaderCanvasProps) {
 			gl.shaderSource(shader, source)
 			gl.compileShader(shader)
 
-			if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+			if (gl.getShaderParameter(shader, gl.COMPILE_STATUS) == false) {
 				console.error('Error compiling shader:', gl.getShaderInfoLog(shader))
 				gl.deleteShader(shader)
 				return null
@@ -150,13 +150,13 @@ export default function ShaderCanvas({ className = '' }: ShaderCanvasProps) {
 
 		function createProgram(gl: WebGLRenderingContext, vertexShader: WebGLShader, fragmentShader: WebGLShader) {
 			const program = gl.createProgram()
-			if (!program) return null
+			if (program == null || vertexShader == null || fragmentShader == null || gl == null) return null
 
 			gl.attachShader(program, vertexShader)
 			gl.attachShader(program, fragmentShader)
 			gl.linkProgram(program)
 
-			if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+			if (gl.getProgramParameter(program, gl.LINK_STATUS) == false) {
 				console.error('Error linking program:', gl.getProgramInfoLog(program))
 				gl.deleteProgram(program)
 				return null
@@ -192,6 +192,8 @@ export default function ShaderCanvas({ className = '' }: ShaderCanvasProps) {
 		}
 
 		function render(time: number) {
+			if (!canvas || !gl) return
+
 			resizeCanvasToDisplaySize(canvas)
 
 			gl.viewport(0, 0, canvas.width, canvas.height)

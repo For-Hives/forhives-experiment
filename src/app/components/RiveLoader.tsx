@@ -1,12 +1,16 @@
 'use client'
 
-import { useRive, useStateMachineInput } from '@rive-app/react-canvas'
+import { Fit, Layout, useRive, useStateMachineInput } from '@rive-app/react-canvas'
 import { useEffect, useState } from 'react'
 
 import AnimationExplanation from './AnimationExplanation'
 import { GlassElement } from './liquidglass'
 
-export default function RiveLoader() {
+interface RiveLoaderProps {
+	onAnimationComplete?: () => void
+}
+
+export default function RiveLoader({ onAnimationComplete }: RiveLoaderProps) {
 	const [isVisible, setIsVisible] = useState(true)
 	const [isCompletelyHidden, setIsCompletelyHidden] = useState(false)
 	// we use that one when the rive animation is launched, so we can check if the page is loaded
@@ -23,6 +27,9 @@ export default function RiveLoader() {
 		onLoad: () => {
 			console.info('Rive loaded successfully')
 		},
+		layout: new Layout({
+			fit: Fit.Cover,
+		}),
 		autoplay: true,
 		artboard: 'Artboard',
 	})
@@ -143,6 +150,9 @@ export default function RiveLoader() {
 		console.info('Hiding loader with fade out')
 		setIsVisible(false)
 
+		// Call the callback to notify that animation is complete
+		onAnimationComplete?.()
+
 		// After fade transition completes (0.5s), remove from DOM completely
 		setTimeout(() => {
 			console.info('Removing loader from DOM completely')
@@ -170,8 +180,20 @@ export default function RiveLoader() {
 						height: '120vh',
 					}}
 				/>
-				<div className="absolute bottom-10 left-1/2 -translate-x-1/2">
+				<div className="absolute bottom-10 left-1/2 hidden -translate-x-1/2 lg:block">
 					<GlassElement width={350} height={180} radius={50} depth={10} blur={2} chromaticAberration={5}>
+						<div className="relative flex h-full w-full flex-col items-center justify-end gap-4 pb-5 text-center">
+							<AnimationExplanation />
+							<div className="absolute bottom-4 left-1/2 -translate-x-1/2">
+								<div className="flex items-center gap-2">
+									<p className="text-sm text-white">Loading...</p>
+								</div>
+							</div>
+						</div>
+					</GlassElement>
+				</div>
+				<div className="absolute bottom-24 left-1/2 block -translate-x-1/2 lg:hidden">
+					<GlassElement width={300} height={150} radius={50} depth={10} blur={2} chromaticAberration={5}>
 						<div className="relative flex h-full w-full flex-col items-center justify-end gap-4 pb-5 text-center">
 							<AnimationExplanation />
 							<div className="absolute bottom-4 left-1/2 -translate-x-1/2">
