@@ -11,8 +11,8 @@ export default function Home() {
 	return (
 		<main className="min-h-screen w-screen">
 			<DiagonalSlider
-				leftComponent={(props) => <HeroAndy {...props} />}
-				rightComponent={(props) => <HeroBreval {...props} />}
+				leftComponent={<HeroAndy />}
+				rightComponent={<HeroBreval />}
 				// Fallback images if components don't load
 				leftImage="/screens/bre.png"
 				rightImage="/screens/dydy.png"
