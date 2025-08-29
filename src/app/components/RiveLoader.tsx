@@ -8,12 +8,12 @@ import { GlassElement } from './liquidglass'
 
 interface RiveLoaderProps {
 	onAnimationComplete?: () => void
-	onPreloadStart?: () => void // Nouveau callback pour démarrer le préchargement 1s avant
-	onRiveDisplayed?: () => void // Callback quand Rive est affiché et fonctionnel
-	isPreloadComplete?: boolean // État du préchargement depuis le contexte
+	onPreloadStart?: () => void // New callback to start preloading 1s before
+	onRiveDisplayed?: () => void // Callback when Rive is displayed and functional
+	isPreloadComplete?: boolean // Preload state from context
 }
 
-export default function RiveLoader({ onAnimationComplete, onRiveDisplayed, isPreloadComplete }: RiveLoaderProps) {
+export default function RiveLoader({ onRiveDisplayed, onAnimationComplete, isPreloadComplete }: RiveLoaderProps) {
 	const [isVisible, setIsVisible] = useState(true)
 	const [isCompletelyHidden, setIsCompletelyHidden] = useState(false)
 	// we use that one when the rive animation is launched, so we can check if the page is loaded
@@ -29,7 +29,7 @@ export default function RiveLoader({ onAnimationComplete, onRiveDisplayed, isPre
 		},
 		onLoad: () => {
 			console.info('Rive loaded successfully')
-			// Déclencher le callback avec un petit délai pour s'assurer que Rive est bien affiché
+			// Trigger callback with a small delay to ensure Rive is properly displayed
 			setTimeout(() => {
 				console.info('Rive is now displayed and ready - triggering background preload')
 				onRiveDisplayed?.()
@@ -139,7 +139,6 @@ export default function RiveLoader({ onAnimationComplete, onRiveDisplayed, isPre
 					}, 3000)
 				} else if (isPageReady && isPreloadComplete != null) {
 					console.info('Page ready but preload still in progress - waiting for preload')
-					// On attend que le préchargement soit terminé
 				} else {
 					// If page not loaded yet, wait for it
 					window.addEventListener('load', checkReadyForFinalAnimation)
@@ -151,7 +150,6 @@ export default function RiveLoader({ onAnimationComplete, onRiveDisplayed, isPre
 		}
 	}, [canCheckIsLoaded, isLoadedInput, isPreloadComplete])
 
-	// Effect pour déclencher l'animation finale quand le préchargement se termine
 	useEffect(() => {
 		if (canCheckIsLoaded && isLoadedInput && isPreloadComplete != null && document.readyState === 'complete') {
 			console.info('Preload just completed - checking if final animation should start')

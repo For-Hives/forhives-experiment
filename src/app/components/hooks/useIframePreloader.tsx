@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 
 interface IframePreloaderOptions {
 	urls?: string[]
-	delay?: number // délai avant de commencer le préchargement
+	delay?: number // delay before starting preloading
 }
 
 export function useIframePreloader({ urls = [], delay = 1000 }: IframePreloaderOptions = {}) {
@@ -23,7 +23,7 @@ export function useIframePreloader({ urls = [], delay = 1000 }: IframePreloaderO
 			console.info('Starting iframe preloading for URLs:', urls)
 			setIsPreloading(true)
 
-			// Créer des iframes cachées pour précharger
+			// Create hidden iframes to preload
 			const preloadPromises = urls.map((url, index) => {
 				return new Promise<void>(resolve => {
 					const iframe = document.createElement('iframe')
@@ -59,10 +59,10 @@ export function useIframePreloader({ urls = [], delay = 1000 }: IframePreloaderO
 					iframe.onerror = error => {
 						console.warn(`Iframe preload failed for ${url}:`, error)
 						cleanup()
-						resolve() // On considère comme "chargé" même en cas d'erreur
+						resolve()
 					}
 
-					// Ajouter l'iframe au DOM pour déclencher le chargement
+					// Add the iframe to the DOM to trigger the loading
 					document.body.appendChild(iframe)
 					iframesRef.current[index] = iframe
 				})
@@ -76,7 +76,7 @@ export function useIframePreloader({ urls = [], delay = 1000 }: IframePreloaderO
 				})
 				.catch(error => {
 					console.warn('Some iframes failed to preload:', error)
-					// On considère quand même le préchargement comme terminé
+					// We consider the preloading as complete even if some iframes fail
 					setIsPreloadComplete(true)
 				})
 				.finally(() => {
@@ -86,7 +86,7 @@ export function useIframePreloader({ urls = [], delay = 1000 }: IframePreloaderO
 
 		return () => {
 			clearTimeout(timeoutId)
-			// Nettoyer les iframes si le composant est démonté
+			// Clean up the iframes if the component is unmounted
 			iframesRef.current.forEach(iframe => {
 				if (iframe?.parentNode != null) {
 					iframe.parentNode.removeChild(iframe)
