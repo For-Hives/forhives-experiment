@@ -105,40 +105,39 @@ export default function RiveLoader() {
 		}
 	}, [isStartedInput, isStaleInput, isLoadedInput])
 
-	// useEffect(() => {
-	// 	// trigger this when the second animation is launched completely
-	// 	if (canCheckIsLoaded && isLoadedInput) {
-	// 		// check if the page is loaded
-	// 		const checkPageLoad = () => {
-	// 			if (document.readyState === 'complete') {
-	// 				// launch 3s counter then launch the last part of the animation
-	// 				console.log('Page loaded, waiting 3s before triggering isLoaded')
-	// 				const loadedTimer = setTimeout(() => {
-	// 					console.log('Triggering final animation (isLoaded = true)')
-	// 					isLoadedInput.value = true
+	useEffect(() => {
+		// trigger this when the second animation is launched completely
+		if (canCheckIsLoaded && isLoadedInput) {
+			// check if the page is loaded
+			const checkPageLoad = () => {
+				if (document.readyState === 'complete') {
+					// launch 3s counter then launch the last part of the animation
+					console.log('Page loaded, waiting 3s before triggering isLoaded')
+					const loadedTimer = setTimeout(() => {
+						console.log('Triggering final animation (isLoaded = true)')
+						isLoadedInput.value = true
 
-	// 					// Wait 5s for final animation to complete, then wait 3s more before fade out
-	// 					setTimeout(() => {
-	// 						console.log('Final animation completed, waiting 3s more before fade out')
-	// 						setTimeout(() => {
-	// 							console.log('Starting fade out after final animation + 3s')
-	// 							// todo: reactivate
-	// 							// onLastAnimationCompleted()
-	// 						}, 3000)
-	// 					}, 3000)
-	// 				}, 3000)
+						// Wait 5s for final animation to complete, then wait 3s more before fade out
+						setTimeout(() => {
+							console.log('Final animation completed, waiting 3s more before fade out')
+							setTimeout(() => {
+								console.log('Starting fade out after final animation + 3s')
+								onLastAnimationCompleted()
+							}, 3000)
+						}, 3000)
+					}, 3000)
 
-	// 				return () => clearTimeout(loadedTimer)
-	// 			} else {
-	// 				// If page not loaded yet, wait for it
-	// 				window.addEventListener('load', checkPageLoad)
-	// 				return () => window.removeEventListener('load', checkPageLoad)
-	// 			}
-	// 		}
+					return () => clearTimeout(loadedTimer)
+				} else {
+					// If page not loaded yet, wait for it
+					window.addEventListener('load', checkPageLoad)
+					return () => window.removeEventListener('load', checkPageLoad)
+				}
+			}
 
-	// 		checkPageLoad()
-	// 	}
-	// }, [canCheckIsLoaded, isLoadedInput])
+			checkPageLoad()
+		}
+	}, [canCheckIsLoaded, isLoadedInput])
 
 	const onLastAnimationCompleted = () => {
 		console.log('Hiding loader with fade out')
@@ -175,10 +174,9 @@ export default function RiveLoader() {
 					<GlassElement width={350} height={180} radius={50} depth={10} blur={2} chromaticAberration={5}>
 						<div className="relative flex h-full w-full flex-col items-center justify-end gap-4 pb-5 text-center">
 							<AnimationExplanation />
-							<div className="absolute bottom-0 left-1/2 -translate-x-1/2">
+							<div className="absolute bottom-4 left-1/2 -translate-x-1/2">
 								<div className="flex items-center gap-2">
 									<p className="text-sm text-white">Loading...</p>
-									<div className="loader scale-[40%]" />
 								</div>
 							</div>
 						</div>
