@@ -65,6 +65,9 @@ export default function DiagonalSlider({
 
 	// Position states: 50% = center, 5% = show mostly right, 95% = show mostly left
 	const [position, setPosition] = useState(60)
+	// Navigation mode: when true, allows iframe interaction
+	const [isNavigationMode, setIsNavigationMode] = useState(false)
+	const [activeMode, setActiveMode] = useState<'left' | 'right' | null>(null)
 
 	// Electric mode states
 	const [displayPos, setDisplayPos] = useState(60) // Smooth display position for electric mode
@@ -94,9 +97,9 @@ export default function DiagonalSlider({
 		return () => cancelAnimationFrame(raf)
 	}, [position])
 
-	// Simple hover system: left half vs right half
+	// Enhanced hover system with navigation mode
 	const handleMouseMove = (e: React.MouseEvent) => {
-		if (!containerRef.current) return
+		if (!containerRef.current || isNavigationMode) return
 
 		const rect = containerRef.current.getBoundingClientRect()
 		const x = ((e.clientX - rect.left) / rect.width) * 100
@@ -111,8 +114,49 @@ export default function DiagonalSlider({
 	}
 
 	const handleMouseLeave = () => {
-		setPosition(60) // Back to center
+		if (!isNavigationMode) {
+			setPosition(60) // Back to center
+		}
 	}
+
+	// Double click to enter/exit navigation mode
+	const handleDoubleClick = (e: React.MouseEvent) => {
+		if (!containerRef.current) return
+
+		const rect = containerRef.current.getBoundingClientRect()
+		const x = ((e.clientX - rect.left) / rect.width) * 100
+
+		if (isNavigationMode) {
+			// Exit navigation mode
+			setIsNavigationMode(false)
+			setActiveMode(null)
+			setPosition(60)
+		} else {
+			// Enter navigation mode
+			setIsNavigationMode(true)
+			if (x < 50) {
+				setActiveMode('left')
+				setPosition(95) // Show mostly left
+			} else {
+				setActiveMode('right')
+				setPosition(5) // Show mostly right
+			}
+		}
+	}
+
+	// Keyboard shortcut to exit navigation mode
+	useEffect(() => {
+		const handleKeyPress = (e: KeyboardEvent) => {
+			if (e.key === 'Escape' && isNavigationMode) {
+				setIsNavigationMode(false)
+				setActiveMode(null)
+				setPosition(60)
+			}
+		}
+
+		window.addEventListener('keydown', handleKeyPress)
+		return () => window.removeEventListener('keydown', handleKeyPress)
+	}, [isNavigationMode])
 
 	// Utility: clamp a number between 0..100
 	const clamp01_100 = (v: number) => Math.max(0, Math.min(100, v))
@@ -191,32 +235,53 @@ export default function DiagonalSlider({
 	return (
 		<motion.div
 			ref={containerRef}
-			className="relative h-screen w-screen overflow-hidden select-none cursor-pointer"
+			className={`relative h-screen w-screen overflow-hidden select-none ${
+				isNavigationMode ? 'cursor-default' : 'cursor-pointer'
+			}`}
 			onMouseMove={handleMouseMove}
 			onMouseEnter={handleMouseMove}
 			onMouseLeave={handleMouseLeave}
+			onDoubleClick={handleDoubleClick}
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			transition={{ duration: 0.6 }}
 			style={{ pointerEvents: 'auto' }}
 		>
 			{/* Right Component/Image - Base Layer */}
-			<div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
-				<div className="h-full w-full pointer-events-none select-none">
-					{rightComponent ??
-						(rightImage != null && (
+			<div className={`absolute inset-0 overflow-hidden ${
+				isNavigationMode && activeMode === 'right' ? 'pointer-events-auto' : 'pointer-events-none'
+			} select-none`}>
+				<div className={`h-full w-full ${
+					isNavigationMode && activeMode === 'right' ? 'pointer-events-auto' : 'pointer-events-none'
+				} select-none`}>
+					{rightComponent ? (
+						typeof rightComponent === 'function' ? 
+							rightComponent({ isNavigationMode: isNavigationMode && activeMode === 'right' }) :
+							rightComponent
+					) : (
+						rightImage != null && (
 							<Image src={rightImage} alt={rightAlt} fill className="object-cover pointer-events-none select-none" unoptimized priority />
-						))}
+						)
+					)}
 				</div>
 			</div>
 
 			{/* Left Component/Image - Wavy Electric Clipped Layer */}
-			<div className="absolute inset-0 overflow-hidden pointer-events-none select-none" style={leftClipStyle}>
-				<div className="h-full w-full pointer-events-none select-none">
-					{leftComponent ??
-						(leftImage != null && (
+			<div className={`absolute inset-0 overflow-hidden ${
+				isNavigationMode && activeMode === 'left' ? 'pointer-events-auto' : 'pointer-events-none'
+			} select-none`} style={leftClipStyle}>
+				<div className={`h-full w-full ${
+					isNavigationMode && activeMode === 'left' ? 'pointer-events-auto' : 'pointer-events-none'
+				} select-none`}>
+					{leftComponent ? (
+						typeof leftComponent === 'function' ? 
+							leftComponent({ isNavigationMode: isNavigationMode && activeMode === 'left' }) :
+							leftComponent
+					) : (
+						leftImage != null && (
 							<Image src={leftImage} alt={leftAlt} fill className="object-cover pointer-events-none select-none" unoptimized priority />
-						))}
+						)
+					)}
 				</div>
 			</div>
 
@@ -299,6 +364,40 @@ export default function DiagonalSlider({
 					</div>
 				)}
 			</motion.div>
+
+			{/* Navigation Mode Instructions */}
+			{!isNavigationMode && (
+				<motion.div
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					exit={{ opacity: 0 }}
+					className="pointer-events-none absolute bottom-8 left-1/2 z-40 -translate-x-1/2 select-none"
+				>
+					<div className="rounded-lg bg-black/20 px-4 py-2 text-center backdrop-blur-md">
+						<p className="text-sm text-white/80">
+							Double-cliquez pour naviguer dans un site • Échap pour quitter
+						</p>
+					</div>
+				</motion.div>
+			)}
+
+			{/* Navigation Mode Indicator */}
+			{isNavigationMode && (
+				<motion.div
+					initial={{ opacity: 0, scale: 0.8 }}
+					animate={{ opacity: 1, scale: 1 }}
+					exit={{ opacity: 0, scale: 0.8 }}
+					className="pointer-events-none absolute top-8 left-1/2 z-40 -translate-x-1/2 select-none"
+				>
+					<div className="flex items-center gap-2 rounded-full bg-blue-500/20 px-4 py-2 backdrop-blur-md">
+						<div className="h-2 w-2 animate-pulse rounded-full bg-blue-400"></div>
+						<p className="text-sm font-medium text-white">
+							Mode Navigation: {activeMode === 'left' ? 'Andy Portfolio' : 'Brev.al Portfolio'}
+						</p>
+						<p className="text-xs text-white/60 ml-2">• Échap pour quitter</p>
+					</div>
+				</motion.div>
+			)}
 		</motion.div>
 	)
 }
