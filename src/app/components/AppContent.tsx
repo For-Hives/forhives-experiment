@@ -10,7 +10,8 @@ interface AppContentProps {
 }
 
 function AppContentInner({ children }: AppContentProps) {
-	const { setRiveAnimationComplete, setPreloadStarted, setRiveDisplayed, isPreloadComplete, isRiveDisplayed } = useAnimationContext()
+	const { setRiveDisplayed, setRiveAnimationComplete, setPreloadStarted, isRiveDisplayed, isPreloadComplete } =
+		useAnimationContext()
 
 	return (
 		<>
@@ -20,7 +21,6 @@ function AppContentInner({ children }: AppContentProps) {
 				onRiveDisplayed={setRiveDisplayed}
 				isPreloadComplete={isPreloadComplete}
 			/>
-			{/* N'afficher le contenu QUE quand Rive est affiché - pas même dans le DOM avant */}
 			{isRiveDisplayed && children}
 		</>
 	)
