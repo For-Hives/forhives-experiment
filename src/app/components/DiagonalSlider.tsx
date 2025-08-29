@@ -6,6 +6,9 @@ import { ReactNode } from 'react'
 
 import Image from 'next/image'
 
+import DiagonalShaderCanvas from './DiagonalShaderCanvas'
+import ShaderCanvas from './ShaderCanvas'
+
 interface DiagonalSliderProps {
 	leftComponent?: ReactNode
 	rightComponent?: ReactNode
@@ -93,6 +96,11 @@ export default function DiagonalSlider({
 						))}
 				</div>
 			</motion.div>
+
+			<div className="pointer-events-none absolute inset-0 z-50">
+				{/* <ShaderCanvas className="h-full w-full bg-green-500" /> */}
+				<ShaderCanvas className="h-full w-full bg-green-500" />
+			</div>
 
 			{/* Minimalist center border SVG - motion animated */}
 			<svg
