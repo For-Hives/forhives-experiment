@@ -32,16 +32,18 @@ export function AnimationProvider({ children }: AnimationProviderProps) {
 	const [isRiveAnimationComplete, setIsRiveAnimationComplete] = useState(false)
 	const [isRiveDisplayed, setIsRiveDisplayedState] = useState(false)
 
-	// Ne précharger les iframes QUE quand Rive est affiché et fonctionnel
+	// Only preload iframes when Rive is displayed and functional
 	const { totalCount, loadedCount, isPreloadComplete } = useIframePreloader({
 		urls: isRiveDisplayed ? ['https://andy-cinquin.com', 'https://brev.al'] : [],
-		delay: 2000, // Délai supplémentaire après que Rive soit affiché
+		delay: 2000, // Additional delay after Rive is displayed
 	})
 
-	// Log du progress pour debug
-	console.info(`Rive displayed: ${isRiveDisplayed}, Iframe preload progress: ${loadedCount}/${totalCount}`, { isPreloadComplete })
+	// Log progress for debug
+	console.info(`Rive displayed: ${isRiveDisplayed}, Iframe preload progress: ${loadedCount}/${totalCount}`, {
+		isPreloadComplete,
+	})
 
-	// Le contenu est prêt quand le préchargement est terminé ET l'animation Rive terminée
+	// Content is ready when preloading is complete AND Rive animation is finished
 	const isContentReady = isRiveAnimationComplete && isPreloadComplete
 
 	const setRiveAnimationComplete = () => {
@@ -53,7 +55,7 @@ export function AnimationProvider({ children }: AnimationProviderProps) {
 		setIsRiveDisplayedState(true)
 	}
 
-	// Fonction legacy pour compatibilité avec RiveLoader
+	// Legacy function for compatibility with RiveLoader
 	const setPreloadStarted = () => {
 		console.info('Iframe preload managed by Rive display state')
 	}
@@ -61,11 +63,11 @@ export function AnimationProvider({ children }: AnimationProviderProps) {
 	return (
 		<AnimationContext.Provider
 			value={{
+				setRiveDisplayed,
 				setRiveAnimationComplete,
 				setPreloadStarted,
-				setRiveDisplayed,
-				isRiveAnimationComplete,
 				isRiveDisplayed,
+				isRiveAnimationComplete,
 				isPreloadComplete,
 				isContentReady,
 			}}
