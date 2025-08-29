@@ -139,7 +139,6 @@ export default function DiagonalSlider({
 			>
 				<div className="pointer-events-none h-8 w-[120vw] -translate-x-16 translate-y-2">
 					<div className="pointer-events-none relative h-screen w-screen opacity-[90]">
-						<ShaderCanvas className="pointer-events-none absolute inset-0 z-20 h-screen w-screen scale-110 lg:-translate-y-[48%]" />
 						<div className="pointer-events-none absolute inset-0 z-20 h-screen w-[100vw] translate-x-[10%] -translate-y-[48%] scale-150 lg:w-screen lg:translate-x-0">
 							<ShaderCanvas className="pointer-events-none h-[100vh] w-[200vw]" />
 						</div>
