@@ -191,17 +191,20 @@ export default function RiveLoader({ onRiveDisplayed, onAnimationComplete, isPre
 
 	return (
 		<div
-			className={`fixed inset-0 z-50 flex h-screen w-screen items-center justify-center transition-opacity duration-1000 ease-out ${
+			className={`fixed inset-0 z-50 flex h-screen w-screen items-center justify-center transition-opacity duration-1000 ease-out select-none ${
 				isVisible ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
 			}`}
+			style={{ userSelect: 'none' }}
 		>
-			<div className="relative h-screen w-screen items-center justify-center overflow-hidden">
+			<div className="relative h-screen w-screen items-center justify-center overflow-hidden pointer-events-none select-none">
 				<RiveComponent
 					style={{
 						width: '120vw',
 						transform: 'translateY(-10%) translateX(-10%)',
 						objectFit: 'contain',
 						height: '120vh',
+						pointerEvents: 'none',
+						userSelect: 'none',
 					}}
 				/>
 				<div className="absolute bottom-10 left-1/2 hidden -translate-x-1/2 lg:block">

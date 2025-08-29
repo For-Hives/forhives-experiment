@@ -191,41 +191,43 @@ export default function DiagonalSlider({
 	return (
 		<motion.div
 			ref={containerRef}
-			className="relative h-screen w-screen overflow-hidden select-none"
+			className="relative h-screen w-screen overflow-hidden select-none cursor-pointer"
 			onMouseMove={handleMouseMove}
 			onMouseEnter={handleMouseMove}
 			onMouseLeave={handleMouseLeave}
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			transition={{ duration: 0.6 }}
+			style={{ pointerEvents: 'auto' }}
 		>
 			{/* Right Component/Image - Base Layer */}
-			<div className="absolute inset-0 overflow-hidden">
-				<div className="h-full w-full">
+			<div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
+				<div className="h-full w-full pointer-events-none select-none">
 					{rightComponent ??
 						(rightImage != null && (
-							<Image src={rightImage} alt={rightAlt} fill className="object-cover" unoptimized priority />
+							<Image src={rightImage} alt={rightAlt} fill className="object-cover pointer-events-none select-none" unoptimized priority />
 						))}
 				</div>
 			</div>
 
 			{/* Left Component/Image - Wavy Electric Clipped Layer */}
-			<div className="absolute inset-0 overflow-hidden" style={leftClipStyle}>
-				<div className="h-full w-full">
+			<div className="absolute inset-0 overflow-hidden pointer-events-none select-none" style={leftClipStyle}>
+				<div className="h-full w-full pointer-events-none select-none">
 					{leftComponent ??
 						(leftImage != null && (
-							<Image src={leftImage} alt={leftAlt} fill className="object-cover" unoptimized priority />
+							<Image src={leftImage} alt={leftAlt} fill className="object-cover pointer-events-none select-none" unoptimized priority />
 						))}
 				</div>
 			</div>
 
 			{/* SVG electric arc divider */}
 			<svg
-				className="pointer-events-none absolute inset-0 z-30"
+				className="pointer-events-none absolute inset-0 z-30 select-none"
 				width="100%"
 				height="100%"
 				viewBox="0 0 100 100"
 				preserveAspectRatio="none"
+				style={{ userSelect: 'none' }}
 			>
 				<defs>
 					<filter id="electric-glow" x="-50%" y="-50%" width="200%" height="200%">
@@ -266,7 +268,7 @@ export default function DiagonalSlider({
 
 			{/* Shader overlay */}
 			<motion.div
-				className="pointer-events-none absolute z-20"
+				className="pointer-events-none absolute z-20 select-none"
 				animate={{
 					y: overlayY,
 					x: overlayX,
@@ -283,6 +285,8 @@ export default function DiagonalSlider({
 				style={{
 					width: `${lineLength}px`,
 					transformOrigin: 'left center',
+					userSelect: 'none',
+					pointerEvents: 'none',
 				}}
 			>
 				{showShader && (
