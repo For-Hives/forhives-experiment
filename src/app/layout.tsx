@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 
 import { Geist, Geist_Mono } from 'next/font/google'
 
+import ShaderCanvas from './components/ShaderCanvas'
 import RiveLoader from './components/RiveLoader'
 
 import './globals.css'
@@ -31,6 +32,7 @@ export default function RootLayout({
 		<html lang="en" className="bg-black">
 			<body className={`${geistSans.variable} ${geistMono.variable} bg-black antialiased`}>
 				{/* <RiveLoader /> */}
+				<ShaderCanvas className="absolute inset-0 z-50 h-full w-full" />
 				{children}
 			</body>
 		</html>
