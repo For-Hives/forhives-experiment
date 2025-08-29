@@ -30,7 +30,7 @@ export default function RootLayout({
 	return (
 		<html lang="en" className="bg-black">
 			<body className={`${geistSans.variable} ${geistMono.variable} bg-black antialiased`}>
-				{/* <RiveLoader /> */}
+				<RiveLoader />
 				{children}
 			</body>
 		</html>
