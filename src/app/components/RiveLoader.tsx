@@ -147,17 +147,22 @@ export default function RiveLoader({ onAnimationComplete }: RiveLoaderProps) {
 	}, [canCheckIsLoaded, isLoadedInput])
 
 	const onLastAnimationCompleted = () => {
-		console.info('Hiding loader with fade out')
-		setIsVisible(false)
-
-		// Call the callback to notify that animation is complete
+		console.info('Animation complete - starting fade out and enabling content')
+		
+		// Call the callback to notify that animation is complete (enable shader and content)
 		onAnimationComplete?.()
-
-		// After fade transition completes (0.5s), remove from DOM completely
+		
+		// Start fade out after a short delay to let shader start loading
 		setTimeout(() => {
-			console.info('Removing loader from DOM completely')
-			setIsCompletelyHidden(true)
-		}, 100)
+			console.info('Starting loader fade out')
+			setIsVisible(false)
+
+			// After fade transition completes (1s), remove from DOM completely
+			setTimeout(() => {
+				console.info('Removing loader from DOM completely')
+				setIsCompletelyHidden(true)
+			}, 1000)
+		}, 500)
 	}
 
 	// Completely remove from DOM after fade out
@@ -167,7 +172,7 @@ export default function RiveLoader({ onAnimationComplete }: RiveLoaderProps) {
 
 	return (
 		<div
-			className={`fixed inset-0 z-50 flex h-screen w-screen items-center justify-center transition-opacity duration-500 ease-out ${
+			className={`fixed inset-0 z-50 flex h-screen w-screen items-center justify-center transition-opacity duration-1000 ease-out ${
 				isVisible ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
 			}`}
 		>
