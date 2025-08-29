@@ -3,6 +3,8 @@
 import { useRive, useStateMachineInput } from '@rive-app/react-canvas'
 import { useEffect, useState } from 'react'
 
+import AnimationExplanation from './AnimationExplanation'
+
 export default function RiveLoader() {
 	const [isVisible, setIsVisible] = useState(true)
 	const [isCompletelyHidden, setIsCompletelyHidden] = useState(false)
@@ -61,26 +63,26 @@ export default function RiveLoader() {
 
 		if (isStartedInput && isStaleInput && isLoadedInput && !isInitialized) {
 			console.log('Initializing Rive state machine inputs')
-			
+
 			// First, log current values
 			console.log('Current values BEFORE setting:', {
 				isStarted: isStartedInput.value,
 				isStale: isStaleInput.value,
-				isLoaded: isLoadedInput.value
+				isLoaded: isLoadedInput.value,
 			})
 
 			// Set initial values - force them explicitly
-			isStartedInput.value = false  // Start with false
+			isStartedInput.value = false // Start with false
 			isStaleInput.value = false
 			isLoadedInput.value = false
-			
+
 			// Wait a bit then set isStarted to true to trigger transition
 			setTimeout(() => {
 				isStartedInput.value = true
 				console.log('First animation launched (isStarted = true)', {
 					isStarted: isStartedInput.value,
 					isStale: isStaleInput.value,
-					isLoaded: isLoadedInput.value
+					isLoaded: isLoadedInput.value,
 				})
 			}, 100)
 
@@ -93,7 +95,7 @@ export default function RiveLoader() {
 				console.log('Values after setting isStale:', {
 					isStarted: isStartedInput.value,
 					isStale: isStaleInput.value,
-					isLoaded: isLoadedInput.value
+					isLoaded: isLoadedInput.value,
 				})
 				setCanCheckIsLoaded(true)
 			}, 7000)
@@ -102,49 +104,50 @@ export default function RiveLoader() {
 		}
 	}, [isStartedInput, isStaleInput, isLoadedInput])
 
-	useEffect(() => {
-		// trigger this when the second animation is launched completely
-		if (canCheckIsLoaded && isLoadedInput) {
-			// check if the page is loaded
-			const checkPageLoad = () => {
-				if (document.readyState === 'complete') {
-					// launch 3s counter then launch the last part of the animation
-					console.log('Page loaded, waiting 3s before triggering isLoaded')
-					const loadedTimer = setTimeout(() => {
-						console.log('Triggering final animation (isLoaded = true)')
-						isLoadedInput.value = true
+	// useEffect(() => {
+	// 	// trigger this when the second animation is launched completely
+	// 	if (canCheckIsLoaded && isLoadedInput) {
+	// 		// check if the page is loaded
+	// 		const checkPageLoad = () => {
+	// 			if (document.readyState === 'complete') {
+	// 				// launch 3s counter then launch the last part of the animation
+	// 				console.log('Page loaded, waiting 3s before triggering isLoaded')
+	// 				const loadedTimer = setTimeout(() => {
+	// 					console.log('Triggering final animation (isLoaded = true)')
+	// 					isLoadedInput.value = true
 
-						// Wait 5s for final animation to complete, then wait 3s more before fade out
-						setTimeout(() => {
-							console.log('Final animation completed, waiting 3s more before fade out')
-							setTimeout(() => {
-								console.log('Starting fade out after final animation + 3s')
-								onLastAnimationCompleted()
-							}, 3000)
-						}, 5000)
-					}, 3000)
+	// 					// Wait 5s for final animation to complete, then wait 3s more before fade out
+	// 					setTimeout(() => {
+	// 						console.log('Final animation completed, waiting 3s more before fade out')
+	// 						setTimeout(() => {
+	// 							console.log('Starting fade out after final animation + 3s')
+	// 							// todo: reactivate
+	// 							// onLastAnimationCompleted()
+	// 						}, 3000)
+	// 					}, 3000)
+	// 				}, 3000)
 
-					return () => clearTimeout(loadedTimer)
-				} else {
-					// If page not loaded yet, wait for it
-					window.addEventListener('load', checkPageLoad)
-					return () => window.removeEventListener('load', checkPageLoad)
-				}
-			}
+	// 				return () => clearTimeout(loadedTimer)
+	// 			} else {
+	// 				// If page not loaded yet, wait for it
+	// 				window.addEventListener('load', checkPageLoad)
+	// 				return () => window.removeEventListener('load', checkPageLoad)
+	// 			}
+	// 		}
 
-			checkPageLoad()
-		}
-	}, [canCheckIsLoaded, isLoadedInput])
+	// 		checkPageLoad()
+	// 	}
+	// }, [canCheckIsLoaded, isLoadedInput])
 
 	const onLastAnimationCompleted = () => {
 		console.log('Hiding loader with fade out')
 		setIsVisible(false)
-		
+
 		// After fade transition completes (0.5s), remove from DOM completely
 		setTimeout(() => {
 			console.log('Removing loader from DOM completely')
 			setIsCompletelyHidden(true)
-		}, 500)
+		}, 100)
 	}
 
 	// Completely remove from DOM after fade out
@@ -154,11 +157,11 @@ export default function RiveLoader() {
 
 	return (
 		<div
-			className={`fixed inset-0 z-50 flex h-screen w-screen items-center justify-center bg-black transition-opacity duration-500 ease-out ${
+			className={`fixed inset-0 z-50 flex h-screen w-screen items-center justify-center transition-opacity duration-500 ease-out ${
 				isVisible ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
 			}`}
 		>
-			<div className="h-screen w-screen items-center justify-center overflow-hidden">
+			<div className="relative h-screen w-screen items-center justify-center overflow-hidden">
 				<RiveComponent
 					style={{
 						width: '120vw',
@@ -167,6 +170,17 @@ export default function RiveLoader() {
 						height: '120vh',
 					}}
 				/>
+				<div className="absolute bottom-60 left-1/2 -translate-x-1/2">
+					<div className="flex items-center gap-2">
+						<div className="h-4 w-4 animate-pulse rounded-full bg-white" />
+						<p className="text-sm text-white">Loading forhives.com...</p>
+					</div>
+				</div>
+				<div className="absolute bottom-0 left-1/2 -translate-x-1/2">
+					<div className="flex items-center gap-2">
+						<AnimationExplanation />
+					</div>
+				</div>
 			</div>
 		</div>
 	)

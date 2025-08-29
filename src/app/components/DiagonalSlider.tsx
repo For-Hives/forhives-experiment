@@ -27,7 +27,7 @@ export default function DiagonalSlider({
 	const containerRef = useRef<HTMLDivElement>(null)
 
 	// Position states: 50% = center, 5% = show mostly right, 95% = show mostly left
-	const [position, setPosition] = useState(57)
+	const [position, setPosition] = useState(60)
 	// Direct motion values for ultra-organic spring animation
 
 	// Simple hover system: left half vs right half
@@ -47,7 +47,7 @@ export default function DiagonalSlider({
 	}
 
 	const handleMouseLeave = () => {
-		setPosition(57) // Back to center
+		setPosition(60) // Back to center
 	}
 
 	return (
