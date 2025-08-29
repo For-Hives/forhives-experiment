@@ -16,10 +16,6 @@ interface RiveLoaderProps {
 export default function RiveLoader({ onRiveDisplayed, onAnimationComplete, isPreloadComplete }: RiveLoaderProps) {
 	const [isVisible, setIsVisible] = useState(true)
 	const [isCompletelyHidden, setIsCompletelyHidden] = useState(false)
-	// We use this when the rive animation is launched, so we can check if the page is loaded
-	// but ONLY when the first and second animation are launched completely
-	// We don't want to trigger the animation before
-	const [canCheckIsLoaded, setCanCheckIsLoaded] = useState(false)
 
 	const { RiveComponent, rive } = useRive({
 		stateMachines: 'State Machine 1',
@@ -65,6 +61,12 @@ export default function RiveLoader({ onRiveDisplayed, onAnimationComplete, isPre
 		}
 	}, [isStartedInput, isStaleInput, isLoadedInput, rive])
 
+	// Track animation phases and their completion times
+	const [animationPhase, setAnimationPhase] = useState<'idle' | 'autostart' | 'idle_anim' | 'end_anim' | 'fade_up'>(
+		'idle'
+	)
+	const [idleStartTime, setIdleStartTime] = useState<number>(0)
+
 	// Track if we've already initialized to prevent multiple triggers
 	const [isInitialized, setIsInitialized] = useState(false)
 
@@ -80,90 +82,91 @@ export default function RiveLoader({ onRiveDisplayed, onAnimationComplete, isPre
 		if (isStartedInput && isStaleInput && isLoadedInput && !isInitialized) {
 			console.info('Initializing Rive state machine inputs')
 
-			// First, log current values
-			console.info('Current values BEFORE setting:', {
-				isStarted: isStartedInput.value,
-				isStale: isStaleInput.value,
-				isLoaded: isLoadedInput.value,
-			})
-
 			// Set initial values - force them explicitly
-			isStartedInput.value = false // Start with false
+			isStartedInput.value = false
 			isStaleInput.value = false
 			isLoadedInput.value = false
 
-			// Wait a bit then set isStarted to true to trigger transition
-			setTimeout(() => {
-				isStartedInput.value = true
-				console.info('First animation launched (isStarted = true)', {
-					isStarted: isStartedInput.value,
-					isStale: isStaleInput.value,
-					isLoaded: isLoadedInput.value,
-				})
-			}, 100)
-
 			setIsInitialized(true)
 
-			// Launch the timer to set isStale to true after 7s
-			const staleTimer = setTimeout(() => {
-				console.info('7s elapsed - triggering stale animation (isStale = true)')
-				isStaleInput.value = true
-				console.info('Values after setting isStale:', {
-					isStarted: isStartedInput.value,
-					isStale: isStaleInput.value,
-					isLoaded: isLoadedInput.value,
-				})
-				setCanCheckIsLoaded(true)
-			}, 7000)
+			// PHASE 1: Animation autostart - exactly 7 seconds
+			setTimeout(() => {
+				console.info('🚀 PHASE 1: Starting AUTOSTART animation (7s fixed)')
+				setAnimationPhase('autostart')
+				isStartedInput.value = true
 
-			return () => clearTimeout(staleTimer)
+				// After exactly 7 seconds, move to idle animation
+				setTimeout(() => {
+					console.info('⏰ 7 seconds elapsed - AUTOSTART complete, starting IDLE animation')
+					setAnimationPhase('idle_anim')
+					setIdleStartTime(Date.now())
+					isStaleInput.value = true
+				}, 7000)
+			}, 100)
 		}
 	}, [isStartedInput, isStaleInput, isLoadedInput])
 
+	// Monitor animation phases and trigger end animation when ready
 	useEffect(() => {
-		// Trigger this when the second animation is launched completely
-		if (canCheckIsLoaded && isLoadedInput) {
-			// Check if the page is loaded AND preload is complete
-			const checkReadyForFinalAnimation = () => {
-				const isPageReady = document.readyState === 'complete'
-				console.info('Checking readiness:', { isPreloadComplete, isPageReady })
+		// Only proceed if we're in idle phase and inputs are available
+		if (animationPhase !== 'idle_anim' || !isStaleInput || !isLoadedInput) return
 
-				if (isPageReady && isPreloadComplete === true) {
-					console.info('Page and preload ready - triggering final animation immediately')
-					isLoadedInput.value = true
+		const checkIfReadyForEndAnimation = () => {
+			const idleDuration = Date.now() - idleStartTime
+			const isPageReady = document.readyState === 'complete'
+			const minimumIdleDuration = 3000 // Minimum 3 seconds in idle
 
-					// Wait 3s for final animation to complete, then start fade out
-					setTimeout(() => {
-						console.info('Final animation completed - starting immediate fade out')
-						onLastAnimationCompleted()
-					}, 3000)
-				} else if (isPageReady && isPreloadComplete === false) {
-					console.info('Page ready but preload still in progress - waiting for preload')
-				} else {
-					// If page not loaded yet, wait for it
-					window.addEventListener('load', checkReadyForFinalAnimation)
-					return () => window.removeEventListener('load', checkReadyForFinalAnimation)
-				}
-			}
+			console.info('🔍 Checking end animation readiness:', {
+				minimumRequired: `${minimumIdleDuration}ms`,
+				isPreloadComplete,
+				isPageReady,
+				idleDuration: `${idleDuration}ms`,
+				canStartEnd: idleDuration >= minimumIdleDuration && isPageReady && isPreloadComplete,
+			})
 
-			checkReadyForFinalAnimation()
-		}
-	}, [canCheckIsLoaded, isLoadedInput, isPreloadComplete])
+			if (idleDuration >= minimumIdleDuration && isPageReady && isPreloadComplete === true) {
+				console.info('✅ Ready for END animation - IDLE minimum duration reached AND everything loaded')
 
-	useEffect(() => {
-		if (canCheckIsLoaded && isLoadedInput && isPreloadComplete === true && document.readyState === 'complete') {
-			console.info('Preload just completed - checking if final animation should start')
-			if (isLoadedInput.value === false) {
-				console.info('Triggering final animation now that preload is complete')
+				// PHASE 3: Animation end - 3 seconds
+				setAnimationPhase('end_anim')
 				isLoadedInput.value = true
 
+				// After 3 seconds of end animation, trigger fade up
 				setTimeout(() => {
-					console.info('Final animation completed - starting immediate fade out')
+					console.info('🎯 END animation complete (3s) - starting FADE UP')
+					setAnimationPhase('fade_up')
 					onLastAnimationCompleted()
 				}, 3000)
+			} else if (idleDuration < minimumIdleDuration) {
+				// Wait for minimum idle duration
+				const remainingTime = minimumIdleDuration - idleDuration
+				console.info(`⏳ Waiting ${remainingTime}ms for minimum idle duration`)
+				setTimeout(checkIfReadyForEndAnimation, remainingTime)
+			} else {
+				// Wait for loading to complete
+				console.info('⏳ IDLE minimum reached, waiting for loading to complete...')
+				setTimeout(checkIfReadyForEndAnimation, 500)
 			}
 		}
-	}, [isPreloadComplete, canCheckIsLoaded, isLoadedInput])
+
+		checkIfReadyForEndAnimation()
+	}, [animationPhase, idleStartTime, isStaleInput, isLoadedInput, isPreloadComplete])
+
+	// Listen for preload completion to potentially speed up idle animation
+	useEffect(() => {
+		if (animationPhase === 'idle_anim' && isPreloadComplete === true) {
+			console.info('📦 Preload completed - checking if we can speed up idle animation')
+
+			const idleDuration = Date.now() - idleStartTime
+			const minimumIdleDuration = 3000
+
+			// If we've already waited the minimum and everything is loaded, trigger end animation immediately
+			if (idleDuration >= minimumIdleDuration && document.readyState === 'complete') {
+				console.info('🚀 Preload complete + minimum idle reached - triggering END animation early')
+				// The existing useEffect will handle this automatically
+			}
+		}
+	}, [isPreloadComplete, animationPhase, idleStartTime])
 
 	const onLastAnimationCompleted = () => {
 		console.info('Animation complete - starting fade out and enabling content')
