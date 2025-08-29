@@ -4,14 +4,14 @@ import HeroAndy from './components/HeroAndy'
 
 export default function Home() {
 	return (
-		<main className="min-h-screen">
-			<DiagonalSlider
+		<main className="min-h-screen w-screen">
+			{/* <DiagonalSlider
 				leftComponent={<HeroAndy />}
 				rightComponent={<HeroBreval />}
 				// Fallback images si les composants ne se chargent pas
 				leftImage="/screens/bre.png"
 				rightImage="/screens/dydy.png"
-			/>
+			/> */}
 		</main>
 	)
 }

@@ -13,44 +13,72 @@ export default function RiveLoader() {
 	const { RiveComponent, rive } = useRive({
 		stateMachines: 'State Machine 1',
 		src: '/rive/load_forhives.riv',
-		artboard: 'Artboard',
-		autoplay: true,
+		onLoadError: error => {
+			console.error('Rive loading error:', error)
+		},
 		onLoad: () => {
 			console.log('Rive loaded successfully')
 		},
-		onLoadError: (error) => {
-			console.error('Rive loading error:', error)
-		},
+		autoplay: true,
+		artboard: 'Artboard',
 	})
 
+	// Use the correct state machine name
 	const isStartedInput = useStateMachineInput(rive, 'State Machine 1', 'isStarted')
 	const isStaleInput = useStateMachineInput(rive, 'State Machine 1', 'isStale')
 	const isLoadedInput = useStateMachineInput(rive, 'State Machine 1', 'isLoaded')
 
-	// Set initial state: only isStarted = true, others = false
+	// Debug state machine inputs
 	useEffect(() => {
-		if (isStartedInput && isStaleInput && isLoadedInput) {
-			// we get there when the page is loaded
+		console.log('Debug - Rive instance:', rive)
+		console.log('Debug - isStartedInput:', isStartedInput)
+		console.log('Debug - isStaleInput:', isStaleInput)
+		console.log('Debug - isLoadedInput:', isLoadedInput)
 
-			// If it's the first load, we have everything as false, so we can setup the first ( isStarted value to 'true' )
-			// to launch the first animation
-			if (isStartedInput.value === false && isStaleInput.value === false && isLoadedInput.value === false) {
-				isStartedInput.value = true
-				isStaleInput.value = false
-				isLoadedInput.value = false
-				console.log('First animation launched (isStarted = true)')
-				
-				// at the same time, launch the timer to set isStale to true ( so we can launch the second animation [stale] )
-				const staleTimer = setTimeout(() => {
-					console.log('staleTimer launched - triggering isStale')
-					isStaleInput.value = true
-					setCanCheckIsLoaded(true)
-				}, 7000)
-				
-				return () => clearTimeout(staleTimer)
-			}
+		if (rive) {
+			console.log('Rive state machine names:', rive.stateMachineNames)
+			// Try to get all inputs to see what's available
+			const inputs = rive.stateMachineInputs('State Machine 1')
+			console.log(
+				'Available inputs in State Machine 1:',
+				inputs?.map(i => i.name)
+			)
 		}
-	}, [isStartedInput, isStaleInput, isLoadedInput])
+	}, [isStartedInput, isStaleInput, isLoadedInput, rive])
+
+	// Track if we've already initialized to prevent multiple triggers
+	const [isInitialized, setIsInitialized] = useState(false)
+
+	// Set initial state and launch sequence
+	useEffect(() => {
+		console.log('Checking initialization conditions:', {
+			initialized: isInitialized,
+			hasStarted: !!isStartedInput,
+			hasStale: !!isStaleInput,
+			hasLoaded: !!isLoadedInput,
+		})
+
+		if (isStartedInput && isStaleInput && isLoadedInput && !isInitialized) {
+			console.log('Initializing Rive state machine inputs')
+
+			// Set initial values
+			isStartedInput.value = true
+			isStaleInput.value = false
+			isLoadedInput.value = false
+			console.log('First animation launched (isStarted = true)')
+
+			setIsInitialized(true)
+
+			// Launch the timer to set isStale to true after 7s
+			const staleTimer = setTimeout(() => {
+				console.log('7s elapsed - triggering stale animation (isStale = true)')
+				isStaleInput.value = true
+				setCanCheckIsLoaded(true)
+			}, 7000)
+
+			return () => clearTimeout(staleTimer)
+		}
+	}, [isStartedInput, isStaleInput, isLoadedInput, isInitialized])
 
 	useEffect(() => {
 		// trigger this when the second animation is launched completely
@@ -63,14 +91,14 @@ export default function RiveLoader() {
 					const loadedTimer = setTimeout(() => {
 						console.log('Triggering final animation (isLoaded = true)')
 						isLoadedInput.value = true
-						
+
 						// Launch "onLastAnimationCompleted" after 3s
 						setTimeout(() => {
 							console.log('Starting fade out')
 							onLastAnimationCompleted()
 						}, 3000)
 					}, 3000)
-					
+
 					return () => clearTimeout(loadedTimer)
 				} else {
 					// If page not loaded yet, wait for it
@@ -78,7 +106,7 @@ export default function RiveLoader() {
 					return () => window.removeEventListener('load', checkPageLoad)
 				}
 			}
-			
+
 			checkPageLoad()
 		}
 	}, [canCheckIsLoaded, isLoadedInput])
