@@ -97,9 +97,14 @@ export default function DiagonalSlider({
 				</div>
 			</motion.div>
 
-			<div className="pointer-events-none absolute inset-0 z-50">
-				{/* <ShaderCanvas className="h-full w-full bg-green-500" /> */}
-				<ShaderCanvas className="h-full w-full bg-green-500" />
+			<div
+				className="pointer-events-none absolute inset-0 z-50"
+				style={{
+					transform: `translateX(${position}px)`,
+				}}
+			>
+				<div className="mt-48 ml-22 h-10 w-full -rotate-[64.3deg] bg-green-500/25" />
+				{/* <ShaderCanvas className="h-full w-full" /> */}
 			</div>
 
 			{/* Minimalist center border SVG - motion animated */}
