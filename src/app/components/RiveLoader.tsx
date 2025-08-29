@@ -11,17 +11,10 @@ export default function RiveLoader({ onComplete }: RiveLoaderProps) {
 	const [isVisible, setIsVisible] = useState(true)
 
 	const { RiveComponent, rive } = useRive({
+		stateMachines: 'State Machine 1',
 		src: '/rive/load_forhives.riv',
-		onLoadError: error => {
-			console.error('Rive loading error:', error)
-		},
-		onLoad: () => {
-			const vmi = rive?.viewModelInstance
-			console.log('Rive loaded successfully')
-			console.log('Available artboards:', rive?.artboardNames)
-			console.log('Available state machines:', rive?.stateMachineNames)
-		},
 		autoplay: true,
+		autoBind: true,
 		artboard: 'Artboard',
 	})
 
@@ -31,6 +24,7 @@ export default function RiveLoader({ onComplete }: RiveLoaderProps) {
 
 	// Set initial state: only isStarted = true, others = false
 	useEffect(() => {
+		console.log(isStartedInput, isStaleInput, isLoadedInput)
 		if (isStartedInput && isStaleInput && isLoadedInput) {
 			isStartedInput.value = true
 			isStaleInput.value = false

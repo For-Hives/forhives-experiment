@@ -22,13 +22,13 @@ export default function HeroAndy() {
 			)}
 
 			{/* Iframe */}
-			<iframe
+			{/* <iframe
 				src="https://andy-cinquin.com"
 				className="h-full w-full border-0"
 				onLoad={() => setIsLoading(false)}
 				onClick={handleClick}
 				title="Andy Portfolio"
-			/>
+			/> */}
 		</div>
 	)
 }

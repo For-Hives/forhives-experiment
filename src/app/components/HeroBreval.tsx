@@ -22,13 +22,13 @@ export default function HeroBreval() {
 			)}
 
 			{/* Iframe */}
-			<iframe
+			{/* <iframe
 				src="https://brev.al"
 				className="h-full w-full border-0"
 				onLoad={() => setIsLoading(false)}
 				onClick={handleClick}
 				title="Breval Portfolio"
-			/>
+			/> */}
 		</div>
 	)
 }
