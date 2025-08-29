@@ -4,6 +4,7 @@ import { useRive, useStateMachineInput } from '@rive-app/react-canvas'
 import { useEffect, useState } from 'react'
 
 import AnimationExplanation from './AnimationExplanation'
+import { GlassElement } from './liquidglass'
 
 export default function RiveLoader() {
 	const [isVisible, setIsVisible] = useState(true)
@@ -170,16 +171,18 @@ export default function RiveLoader() {
 						height: '120vh',
 					}}
 				/>
-				<div className="absolute bottom-60 left-1/2 -translate-x-1/2">
-					<div className="flex items-center gap-2">
-						<div className="h-4 w-4 animate-pulse rounded-full bg-white" />
-						<p className="text-sm text-white">Loading forhives.com...</p>
-					</div>
-				</div>
-				<div className="absolute bottom-0 left-1/2 -translate-x-1/2">
-					<div className="flex items-center gap-2">
-						<AnimationExplanation />
-					</div>
+				<div className="absolute bottom-10 left-1/2 -translate-x-1/2">
+					<GlassElement width={350} height={180} radius={50} depth={10} blur={2} chromaticAberration={5}>
+						<div className="relative flex h-full w-full flex-col items-center justify-end gap-4 pb-5 text-center">
+							<AnimationExplanation />
+							<div className="absolute bottom-0 left-1/2 -translate-x-1/2">
+								<div className="flex items-center gap-2">
+									<p className="text-sm text-white">Loading...</p>
+									<div className="loader scale-[40%]" />
+								</div>
+							</div>
+						</div>
+					</GlassElement>
 				</div>
 			</div>
 		</div>

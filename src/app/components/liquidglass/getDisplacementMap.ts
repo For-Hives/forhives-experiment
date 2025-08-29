@@ -1,16 +1,16 @@
-export interface DisplacementMapOptions {
-	height: number
-	width: number
-	radius: number
-	depth: number
-}
+import { DisplacementOptions } from './getDisplacementFilter'
 
 /**
  * Creating the displacement map that is used by feDisplacementMap filter.
  * Gradients take into account the radius of the element.
  * This is why they start and end in the middle of the angle curve.
  */
-export const getDisplacementMap = ({ height, width, radius, depth }: DisplacementMapOptions) =>
+export const getDisplacementMap = ({
+	width,
+	radius,
+	height,
+	depth,
+}: Omit<DisplacementOptions, 'chromaticAberration' | 'strength'>) =>
 	'data:image/svg+xml;utf8,' +
 	encodeURIComponent(`<svg height="${height}" width="${width}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
     <style>
