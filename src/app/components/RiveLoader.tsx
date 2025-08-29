@@ -21,7 +21,7 @@ export default function RiveLoader() {
 			console.error('Rive loading error:', error)
 		},
 		onLoad: () => {
-			console.log('Rive loaded successfully')
+			console.info('Rive loaded successfully')
 		},
 		autoplay: true,
 		artboard: 'Artboard',
@@ -34,16 +34,16 @@ export default function RiveLoader() {
 
 	// Debug state machine inputs
 	useEffect(() => {
-		console.log('Debug - Rive instance:', rive)
-		console.log('Debug - isStartedInput:', isStartedInput)
-		console.log('Debug - isStaleInput:', isStaleInput)
-		console.log('Debug - isLoadedInput:', isLoadedInput)
+		console.info('Debug - Rive instance:', rive)
+		console.info('Debug - isStartedInput:', isStartedInput)
+		console.info('Debug - isStaleInput:', isStaleInput)
+		console.info('Debug - isLoadedInput:', isLoadedInput)
 
 		if (rive) {
-			console.log('Rive state machine names:', rive.stateMachineNames)
+			console.info('Rive state machine names:', rive.stateMachineNames)
 			// Try to get all inputs to see what's available
 			const inputs = rive.stateMachineInputs('State Machine 1')
-			console.log(
+			console.info(
 				'Available inputs in State Machine 1:',
 				inputs?.map(i => i.name)
 			)
@@ -55,7 +55,7 @@ export default function RiveLoader() {
 
 	// Set initial state and launch sequence
 	useEffect(() => {
-		console.log('Checking initialization conditions:', {
+		console.info('Checking initialization conditions:', {
 			initialized: isInitialized,
 			hasStarted: !!isStartedInput,
 			hasStale: !!isStaleInput,
@@ -63,10 +63,10 @@ export default function RiveLoader() {
 		})
 
 		if (isStartedInput && isStaleInput && isLoadedInput && !isInitialized) {
-			console.log('Initializing Rive state machine inputs')
+			console.info('Initializing Rive state machine inputs')
 
 			// First, log current values
-			console.log('Current values BEFORE setting:', {
+			console.info('Current values BEFORE setting:', {
 				isStarted: isStartedInput.value,
 				isStale: isStaleInput.value,
 				isLoaded: isLoadedInput.value,
@@ -80,7 +80,7 @@ export default function RiveLoader() {
 			// Wait a bit then set isStarted to true to trigger transition
 			setTimeout(() => {
 				isStartedInput.value = true
-				console.log('First animation launched (isStarted = true)', {
+				console.info('First animation launched (isStarted = true)', {
 					isStarted: isStartedInput.value,
 					isStale: isStaleInput.value,
 					isLoaded: isLoadedInput.value,
@@ -91,9 +91,9 @@ export default function RiveLoader() {
 
 			// Launch the timer to set isStale to true after 7s
 			const staleTimer = setTimeout(() => {
-				console.log('7s elapsed - triggering stale animation (isStale = true)')
+				console.info('7s elapsed - triggering stale animation (isStale = true)')
 				isStaleInput.value = true
-				console.log('Values after setting isStale:', {
+				console.info('Values after setting isStale:', {
 					isStarted: isStartedInput.value,
 					isStale: isStaleInput.value,
 					isLoaded: isLoadedInput.value,
@@ -112,16 +112,16 @@ export default function RiveLoader() {
 			const checkPageLoad = () => {
 				if (document.readyState === 'complete') {
 					// launch 3s counter then launch the last part of the animation
-					console.log('Page loaded, waiting 3s before triggering isLoaded')
+					console.info('Page loaded, waiting 3s before triggering isLoaded')
 					const loadedTimer = setTimeout(() => {
-						console.log('Triggering final animation (isLoaded = true)')
+						console.info('Triggering final animation (isLoaded = true)')
 						isLoadedInput.value = true
 
 						// Wait 5s for final animation to complete, then wait 3s more before fade out
 						setTimeout(() => {
-							console.log('Final animation completed, waiting 3s more before fade out')
+							console.info('Final animation completed, waiting 3s more before fade out')
 							setTimeout(() => {
-								console.log('Starting fade out after final animation + 3s')
+								console.info('Starting fade out after final animation + 3s')
 								onLastAnimationCompleted()
 							}, 3000)
 						}, 3000)
@@ -140,12 +140,12 @@ export default function RiveLoader() {
 	}, [canCheckIsLoaded, isLoadedInput])
 
 	const onLastAnimationCompleted = () => {
-		console.log('Hiding loader with fade out')
+		console.info('Hiding loader with fade out')
 		setIsVisible(false)
 
 		// After fade transition completes (0.5s), remove from DOM completely
 		setTimeout(() => {
-			console.log('Removing loader from DOM completely')
+			console.info('Removing loader from DOM completely')
 			setIsCompletelyHidden(true)
 		}, 100)
 	}
