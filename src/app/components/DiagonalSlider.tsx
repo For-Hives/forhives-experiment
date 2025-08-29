@@ -201,22 +201,29 @@ export default function DiagonalSlider({
 			style={{ pointerEvents: 'auto' }}
 		>
 			{/* Right Component/Image - Base Layer */}
-			<div 
-				className="absolute inset-0 overflow-hidden pointer-events-auto"
+			<div
+				className="pointer-events-auto absolute inset-0 overflow-hidden"
 				onMouseMove={handleMouseMove}
 				onMouseEnter={handleMouseMove}
 			>
 				<div className="h-full w-full">
 					{rightComponent ??
 						(rightImage != null && (
-							<Image src={rightImage} alt={rightAlt} fill className="object-cover pointer-events-none select-none" unoptimized priority />
+							<Image
+								src={rightImage}
+								alt={rightAlt}
+								fill
+								className="pointer-events-none object-cover select-none"
+								unoptimized
+								priority
+							/>
 						))}
 				</div>
 			</div>
 
 			{/* Left Component/Image - Wavy Electric Clipped Layer */}
-			<div 
-				className="absolute inset-0 overflow-hidden pointer-events-auto" 
+			<div
+				className="pointer-events-auto absolute inset-0 overflow-hidden"
 				style={leftClipStyle}
 				onMouseMove={handleMouseMove}
 				onMouseEnter={handleMouseMove}
@@ -224,7 +231,14 @@ export default function DiagonalSlider({
 				<div className="h-full w-full">
 					{leftComponent ??
 						(leftImage != null && (
-							<Image src={leftImage} alt={leftAlt} fill className="object-cover pointer-events-none select-none" unoptimized priority />
+							<Image
+								src={leftImage}
+								alt={leftAlt}
+								fill
+								className="pointer-events-none object-cover select-none"
+								unoptimized
+								priority
+							/>
 						))}
 				</div>
 			</div>
@@ -293,8 +307,8 @@ export default function DiagonalSlider({
 				}}
 				style={{
 					width: `${lineLength}px`,
-					transformOrigin: 'left center',
 					userSelect: 'none',
+					transformOrigin: 'left center',
 					pointerEvents: 'none',
 				}}
 			>

@@ -196,15 +196,15 @@ export default function RiveLoader({ onRiveDisplayed, onAnimationComplete, isPre
 			}`}
 			style={{ userSelect: 'none' }}
 		>
-			<div className="relative h-screen w-screen items-center justify-center overflow-hidden pointer-events-none select-none">
+			<div className="pointer-events-none relative h-screen w-screen items-center justify-center overflow-hidden select-none">
 				<RiveComponent
 					style={{
 						width: '120vw',
+						userSelect: 'none',
 						transform: 'translateY(-10%) translateX(-10%)',
+						pointerEvents: 'none',
 						objectFit: 'contain',
 						height: '120vh',
-						pointerEvents: 'none',
-						userSelect: 'none',
 					}}
 				/>
 				<div className="absolute bottom-10 left-1/2 hidden -translate-x-1/2 lg:block">

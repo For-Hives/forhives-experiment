@@ -5,11 +5,7 @@ export default function HeroBreval() {
 		<div className="h-full w-full">
 			{/* <div className="h-full w-full bg-red-950"></div> */}
 			{/* Iframe */}
-			<iframe 
-				src="https://brev.al" 
-				className="h-full w-full border-0 pointer-events-auto" 
-				title="Breval Portfolio" 
-			/>
+			<iframe src="https://brev.al" className="pointer-events-auto h-full w-full border-0" title="Breval Portfolio" />
 		</div>
 	)
 }
