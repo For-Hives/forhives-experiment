@@ -8,9 +8,11 @@ import { GlassElement } from './liquidglass'
 
 interface RiveLoaderProps {
 	onAnimationComplete?: () => void
+	onPreloadStart?: () => void // Nouveau callback pour démarrer le préchargement 1s avant
+	isPreloadComplete?: boolean // État du préchargement depuis le contexte
 }
 
-export default function RiveLoader({ onAnimationComplete }: RiveLoaderProps) {
+export default function RiveLoader({ onPreloadStart, onAnimationComplete, isPreloadComplete }: RiveLoaderProps) {
 	const [isVisible, setIsVisible] = useState(true)
 	const [isCompletelyHidden, setIsCompletelyHidden] = useState(false)
 	// we use that one when the rive animation is launched, so we can check if the page is loaded
@@ -115,43 +117,56 @@ export default function RiveLoader({ onAnimationComplete }: RiveLoaderProps) {
 	useEffect(() => {
 		// trigger this when the second animation is launched completely
 		if (canCheckIsLoaded && isLoadedInput) {
-			// check if the page is loaded
-			const checkPageLoad = () => {
-				if (document.readyState === 'complete') {
-					// launch 3s counter then launch the last part of the animation
-					console.info('Page loaded, waiting 3s before triggering isLoaded')
-					const loadedTimer = setTimeout(() => {
-						console.info('Triggering final animation (isLoaded = true)')
-						isLoadedInput.value = true
+			// check if the page is loaded AND preload is complete
+			const checkReadyForFinalAnimation = () => {
+				const isPageReady = document.readyState === 'complete'
+				console.info('Checking readiness:', { isPreloadComplete, isPageReady })
 
-						// Wait 5s for final animation to complete, then wait 3s more before fade out
-						setTimeout(() => {
-							console.info('Final animation completed, waiting 3s more before fade out')
-							setTimeout(() => {
-								console.info('Starting fade out after final animation + 3s')
-								onLastAnimationCompleted()
-							}, 3000)
-						}, 3000)
+				if (isPageReady && isPreloadComplete) {
+					console.info('Page and preload ready - triggering final animation immediately')
+					isLoadedInput.value = true
+
+					// Wait 3s for final animation to complete, then start fade out
+					setTimeout(() => {
+						console.info('Final animation completed - starting immediate fade out')
+						onLastAnimationCompleted()
 					}, 3000)
-
-					return () => clearTimeout(loadedTimer)
+				} else if (isPageReady && !isPreloadComplete) {
+					console.info('Page ready but preload still in progress - waiting for preload')
+					// On attend que le préchargement soit terminé
 				} else {
 					// If page not loaded yet, wait for it
-					window.addEventListener('load', checkPageLoad)
-					return () => window.removeEventListener('load', checkPageLoad)
+					window.addEventListener('load', checkReadyForFinalAnimation)
+					return () => window.removeEventListener('load', checkReadyForFinalAnimation)
 				}
 			}
 
-			checkPageLoad()
+			checkReadyForFinalAnimation()
 		}
-	}, [canCheckIsLoaded, isLoadedInput])
+	}, [canCheckIsLoaded, isLoadedInput, isPreloadComplete])
+
+	// Effect pour déclencher l'animation finale quand le préchargement se termine
+	useEffect(() => {
+		if (canCheckIsLoaded && isLoadedInput && isPreloadComplete && document.readyState === 'complete') {
+			console.info('Preload just completed - checking if final animation should start')
+			if (!isLoadedInput.value) {
+				console.info('Triggering final animation now that preload is complete')
+				isLoadedInput.value = true
+
+				setTimeout(() => {
+					console.info('Final animation completed - starting immediate fade out')
+					onLastAnimationCompleted()
+				}, 3000)
+			}
+		}
+	}, [isPreloadComplete, canCheckIsLoaded, isLoadedInput])
 
 	const onLastAnimationCompleted = () => {
 		console.info('Animation complete - starting fade out and enabling content')
-		
+
 		// Call the callback to notify that animation is complete (enable shader and content)
 		onAnimationComplete?.()
-		
+
 		// Start fade out after a short delay to let shader start loading
 		setTimeout(() => {
 			console.info('Starting loader fade out')

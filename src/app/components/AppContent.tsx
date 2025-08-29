@@ -10,11 +10,15 @@ interface AppContentProps {
 }
 
 function AppContentInner({ children }: AppContentProps) {
-	const { setRiveAnimationComplete, isContentReady } = useAnimationContext()
+	const { setRiveAnimationComplete, setPreloadStarted, isContentReady, isPreloadComplete } = useAnimationContext()
 
 	return (
 		<>
-			<RiveLoader onAnimationComplete={setRiveAnimationComplete} />
+			<RiveLoader 
+				onAnimationComplete={setRiveAnimationComplete} 
+				onPreloadStart={setPreloadStarted}
+				isPreloadComplete={isPreloadComplete}
+			/>
 			{isContentReady && children}
 		</>
 	)

@@ -6,7 +6,7 @@ import HeroBreval from './components/HeroBreval'
 import HeroAndy from './components/HeroAndy'
 
 export default function Home() {
-	const { isRiveAnimationComplete } = useAnimationContext()
+	const { isPreloadComplete } = useAnimationContext()
 
 	return (
 		<main className="min-h-screen w-screen">
@@ -16,7 +16,7 @@ export default function Home() {
 				// Fallback images si les composants ne se chargent pas
 				leftImage="/screens/bre.png"
 				rightImage="/screens/dydy.png"
-				showShader={isRiveAnimationComplete} // Activer le shader quand Rive est terminé
+				showShader={isPreloadComplete} // Activer le shader quand le préchargement est terminé
 			/>
 		</main>
 	)

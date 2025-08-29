@@ -2,12 +2,14 @@
 
 import { createContext, useContext, useState, ReactNode } from 'react'
 
-import { usePreloader } from './hooks/usePreloader'
+import { useIframePreloader } from './hooks/useIframePreloader'
 
 interface AnimationContextType {
 	isRiveAnimationComplete: boolean
 	isContentReady: boolean
+	isPreloadComplete: boolean
 	setRiveAnimationComplete: () => void
+	setPreloadStarted: () => void
 }
 
 const AnimationContext = createContext<AnimationContextType | undefined>(undefined)
@@ -27,11 +29,14 @@ interface AnimationProviderProps {
 export function AnimationProvider({ children }: AnimationProviderProps) {
 	const [isRiveAnimationComplete, setIsRiveAnimationComplete] = useState(false)
 
-	// Précharger les images pendant que le loader s'affiche
-	const { isPreloadComplete } = usePreloader({
-		images: ['/screens/bre.png', '/screens/dydy.png'],
-		delay: 2000, // Commencer le préchargement après 2s
+	// Précharger les iframes immédiatement quand l'app se charge
+	const { isPreloadComplete, loadedCount, totalCount } = useIframePreloader({
+		urls: ['https://andy-cinquin.com', 'https://brev.al'],
+		delay: 1000, // Commencer après 1s pour laisser Rive s'initialiser
 	})
+
+	// Log du progress pour debug
+	console.info(`Iframe preload progress: ${loadedCount}/${totalCount}`, { isPreloadComplete })
 
 	// Le contenu est prêt quand le préchargement est terminé ET l'animation Rive terminée
 	const isContentReady = isRiveAnimationComplete && isPreloadComplete
@@ -40,11 +45,18 @@ export function AnimationProvider({ children }: AnimationProviderProps) {
 		setIsRiveAnimationComplete(true)
 	}
 
+	// Fonction legacy pour compatibilité avec RiveLoader
+	const setPreloadStarted = () => {
+		console.info('Iframe preload already started automatically')
+	}
+
 	return (
 		<AnimationContext.Provider
 			value={{
 				setRiveAnimationComplete,
+				setPreloadStarted,
 				isRiveAnimationComplete,
+				isPreloadComplete,
 				isContentReady,
 			}}
 		>
