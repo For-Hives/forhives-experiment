@@ -11,6 +11,9 @@ importers:
       '@next/eslint-plugin-next':
         specifier: 15.5.1
         version: 15.5.1
+      '@rive-app/react-canvas':
+        specifier: ^4.23.1
+        version: 4.23.1(react@19.1.1)
       '@tanstack/eslint-plugin-query':
         specifier: ^5.83.1
         version: 5.83.1(eslint@9.34.0(jiti@2.5.1))(typescript@5.9.2)
@@ -425,6 +428,14 @@ packages:
   '@pkgr/core@0.2.9':
     resolution: {integrity: sha512-QNqXyfVS2wm9hweSYD2O7F0G06uurj9kZ96TRQE5Y9hU7+tgdZwIkbAKc5Ocy1HxEY2kuDQa6cQ1WRs/O5LFKA==}
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
+
+  '@rive-app/canvas@2.31.2':
+    resolution: {integrity: sha512-luOos9IW14vsS0M//rvBjIg9UIjQS3vwGlqzP2ceCvqa7ms70vgtTpa6cSiibWUVVWAJwnmJMI8WZYgoJ6V5ug==}
+
+  '@rive-app/react-canvas@4.23.1':
+    resolution: {integrity: sha512-ApnGXtnUkv3LslO8KloBwDQ9QEzhgjPBx6+jml5Caeeiu3svi5bkgiQaK9oqk8WU548vL+k09yVNIcqUWs1QNA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0
 
   '@rtsao/scc@1.1.0':
     resolution: {integrity: sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==}
@@ -2443,6 +2454,13 @@ snapshots:
   '@nolyfill/is-core-module@1.0.39': {}
 
   '@pkgr/core@0.2.9': {}
+
+  '@rive-app/canvas@2.31.2': {}
+
+  '@rive-app/react-canvas@4.23.1(react@19.1.1)':
+    dependencies:
+      '@rive-app/canvas': 2.31.2
+      react: 19.1.1
 
   '@rtsao/scc@1.1.0': {}
 
