@@ -112,19 +112,29 @@ export default function DiagonalSlider({
 				</div>
 			</motion.div>
 
-			<div
+			<motion.div
 				className="pointer-events-none absolute z-50"
+				animate={{
+					y: centerY,
+					rotate: angle,
+					left: `${centerX}px`,
+				}}
+				transition={{
+					type: 'spring',
+					stiffness: 120,
+					restSpeed: 0.001,
+					restDelta: 0.001,
+					mass: 1.2,
+					damping: 20,
+				}}
 				style={{
 					transformOrigin: 'center',
-					transform: `translate(-50%, -50%) rotate(${angle}deg)`,
-					top: `${centerY}px`,
-					left: `${centerX}px`,
 				}}
 			>
 				<div className="h-10 w-screen bg-green-500/50" />
 				{/* Tu peux mettre n'importe quel contenu ici - il suivra parfaitement la ligne diagonale */}
 				{/* <ShaderCanvas className="h-full w-full" /> */}
-			</div>
+			</motion.div>
 
 			{/* Minimalist center border SVG - motion animated */}
 			<svg
