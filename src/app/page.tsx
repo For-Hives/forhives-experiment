@@ -16,7 +16,7 @@ export default function Home() {
 				// Fallback images si les composants ne se chargent pas
 				leftImage="/screens/bre.png"
 				rightImage="/screens/dydy.png"
-				showShader={isRiveAnimationComplete}
+				showShader={isRiveAnimationComplete} // Activer le shader quand Rive est terminé
 			/>
 		</main>
 	)
