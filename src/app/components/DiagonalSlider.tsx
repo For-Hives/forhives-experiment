@@ -148,57 +148,6 @@ export default function DiagonalSlider({
 					</div>
 				)}
 			</motion.div>
-
-			{/* Minimalist center border SVG - motion animated */}
-			<svg
-				className="pointer-events-none absolute inset-0 z-30"
-				width="100%"
-				height="100%"
-				viewBox="0 0 100 100"
-				preserveAspectRatio="none"
-			>
-				{/* Main diagonal line */}
-				<motion.line
-					animate={{
-						x2: Math.max(0, Math.min(100, position - 25)),
-						x1: position,
-					}}
-					y1={0}
-					y2={100}
-					stroke="white"
-					strokeWidth="0.3"
-					strokeOpacity="0.9"
-					transition={{
-						type: 'spring',
-						stiffness: 120,
-						restSpeed: 0.001,
-						restDelta: 0.001,
-						mass: 1.2,
-						damping: 20,
-					}}
-				/>
-
-				{/* Subtle glow effect */}
-				<motion.line
-					animate={{
-						x2: Math.max(0, Math.min(100, position - 25)),
-						x1: position,
-					}}
-					y1={0}
-					y2={100}
-					stroke="rgba(255,255,255,0.3)"
-					strokeWidth="0.6"
-					filter="blur(0.5px)"
-					transition={{
-						type: 'spring',
-						stiffness: 120,
-						restSpeed: 0.001,
-						restDelta: 0.001,
-						mass: 1.2,
-						damping: 20,
-					}}
-				/>
-			</svg>
 		</motion.div>
 	)
 }

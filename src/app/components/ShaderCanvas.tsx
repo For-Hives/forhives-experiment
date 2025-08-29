@@ -118,7 +118,7 @@ export default function ShaderCanvas({ className = '' }: ShaderCanvasProps) {
         float t = clamp((uv.x * -uv.x * 0.16) + 0.15, 0., 1.);                         
         float y = abs(intensity * -t + uv.y);
           
-        float g = pow(y, 0.18);
+        float g = pow(y, 0.14);
                                 
         vec3 col = vec3(2.0, 2.1, 2.3);
         col = col * -g + col;                    
