@@ -6,7 +6,6 @@ import { ReactNode } from 'react'
 
 import Image from 'next/image'
 
-import DiagonalShaderCanvas from './DiagonalShaderCanvas'
 import ShaderCanvas from './ShaderCanvas'
 
 interface DiagonalSliderProps {
@@ -17,9 +16,11 @@ interface DiagonalSliderProps {
 	rightImage?: string
 	leftAlt?: string
 	rightAlt?: string
+	showShader?: boolean
 }
 
 export default function DiagonalSlider({
+	showShader = false,
 	rightImage,
 	rightComponent,
 	rightAlt = 'Right Content',
@@ -137,13 +138,15 @@ export default function DiagonalSlider({
 					transformOrigin: 'left center',
 				}}
 			>
-				<div className="pointer-events-none h-8 w-[120vw] -translate-x-16 translate-y-2">
-					<div className="pointer-events-none relative h-screen w-screen opacity-[90]">
-						<div className="pointer-events-none absolute inset-0 z-20 h-screen w-[100vw] translate-x-[10%] -translate-y-[48%] scale-150 lg:w-screen lg:translate-x-0">
-							<ShaderCanvas className="pointer-events-none h-[100vh] w-[200vw]" />
+				{showShader && (
+					<div className="pointer-events-none h-8 w-[120vw] -translate-x-16 translate-y-2">
+						<div className="pointer-events-none relative h-screen w-screen opacity-[90]">
+							<div className="pointer-events-none absolute inset-0 z-20 h-screen w-[100vw] translate-x-[10%] -translate-y-[48%] scale-150 lg:w-screen lg:translate-x-0">
+								<ShaderCanvas className="pointer-events-none h-[100vh] w-[200vw]" />
+							</div>
 						</div>
 					</div>
-				</div>
+				)}
 			</motion.div>
 
 			{/* Minimalist center border SVG - motion animated */}
