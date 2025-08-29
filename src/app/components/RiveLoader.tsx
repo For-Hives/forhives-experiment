@@ -9,10 +9,11 @@ import { GlassElement } from './liquidglass'
 interface RiveLoaderProps {
 	onAnimationComplete?: () => void
 	onPreloadStart?: () => void // Nouveau callback pour démarrer le préchargement 1s avant
+	onRiveDisplayed?: () => void // Callback quand Rive est affiché et fonctionnel
 	isPreloadComplete?: boolean // État du préchargement depuis le contexte
 }
 
-export default function RiveLoader({ onAnimationComplete, isPreloadComplete }: RiveLoaderProps) {
+export default function RiveLoader({ onAnimationComplete, onRiveDisplayed, isPreloadComplete }: RiveLoaderProps) {
 	const [isVisible, setIsVisible] = useState(true)
 	const [isCompletelyHidden, setIsCompletelyHidden] = useState(false)
 	// we use that one when the rive animation is launched, so we can check if the page is loaded
@@ -28,6 +29,11 @@ export default function RiveLoader({ onAnimationComplete, isPreloadComplete }: R
 		},
 		onLoad: () => {
 			console.info('Rive loaded successfully')
+			// Déclencher le callback avec un petit délai pour s'assurer que Rive est bien affiché
+			setTimeout(() => {
+				console.info('Rive is now displayed and ready - triggering background preload')
+				onRiveDisplayed?.()
+			}, 500)
 		},
 		layout: new Layout({
 			fit: Fit.Cover,
