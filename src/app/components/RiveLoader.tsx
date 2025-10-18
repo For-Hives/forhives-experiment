@@ -110,19 +110,15 @@ export default function RiveLoader({ onRiveDisplayed, onAnimationComplete, isPre
 
 		const checkIfReadyForEndAnimation = () => {
 			const idleDuration = Date.now() - idleStartTime
-			const isPageReady = document.readyState === 'complete'
-			const minimumIdleDuration = 500 // Minimum 0.5 seconds in idle (drastically reduced)
+			const minimumIdleDuration = 2000 // Minimum 2 seconds in idle (reduced from 4s)
 
 			console.info('🔍 Checking end animation readiness:', {
 				minimumRequired: `${minimumIdleDuration}ms`,
-				isPreloadComplete,
-				isPageReady,
 				idleDuration: `${idleDuration}ms`,
-				canStartEnd: idleDuration >= minimumIdleDuration && isPageReady && isPreloadComplete,
+				canStartEnd: idleDuration >= minimumIdleDuration,
 			})
-
-			if (idleDuration >= minimumIdleDuration && isPageReady) {
-				console.info('✅ Ready for END animation - IDLE minimum duration reached')
+			if (idleDuration >= minimumIdleDuration) {
+				console.info('✅ Ready for END animation - IDLE minimum duration reached AND everything loaded')
 
 				// PHASE 3: Animation end - 3 seconds
 				setAnimationPhase('end_anim')
@@ -155,7 +151,7 @@ export default function RiveLoader({ onRiveDisplayed, onAnimationComplete, isPre
 			console.info('📦 Preload completed - checking if we can speed up idle animation')
 
 			const idleDuration = Date.now() - idleStartTime
-			const minimumIdleDuration = 300 // Minimum 0.3 seconds in idle (drastically reduced)
+			const minimumIdleDuration = 1500 // Minimum 1.5 seconds in idle (reduced from 3s)
 
 			// If we've already waited the minimum and everything is loaded, trigger end animation immediately
 			if (idleDuration >= minimumIdleDuration && document.readyState === 'complete') {
