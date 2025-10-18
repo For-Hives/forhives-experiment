@@ -3,9 +3,6 @@
 import { Fit, Layout, useRive, useStateMachineInput } from '@rive-app/react-canvas'
 import { useEffect, useState } from 'react'
 
-import AnimationExplanation from './AnimationExplanation'
-import { GlassElement } from './liquidglass'
-
 interface RiveLoaderProps {
 	onAnimationComplete?: () => void
 	onPreloadStart?: () => void // New callback to start preloading 1s before
@@ -114,7 +111,7 @@ export default function RiveLoader({ onRiveDisplayed, onAnimationComplete, isPre
 		const checkIfReadyForEndAnimation = () => {
 			const idleDuration = Date.now() - idleStartTime
 			const isPageReady = document.readyState === 'complete'
-			const minimumIdleDuration = 4000 // Minimum 3 seconds in idle
+			const minimumIdleDuration = 500 // Minimum 0.5 seconds in idle (drastically reduced)
 
 			console.info('🔍 Checking end animation readiness:', {
 				minimumRequired: `${minimumIdleDuration}ms`,
@@ -124,8 +121,8 @@ export default function RiveLoader({ onRiveDisplayed, onAnimationComplete, isPre
 				canStartEnd: idleDuration >= minimumIdleDuration && isPageReady && isPreloadComplete,
 			})
 
-			if (idleDuration >= minimumIdleDuration && isPageReady && isPreloadComplete === true) {
-				console.info('✅ Ready for END animation - IDLE minimum duration reached AND everything loaded')
+			if (idleDuration >= minimumIdleDuration && isPageReady) {
+				console.info('✅ Ready for END animation - IDLE minimum duration reached')
 
 				// PHASE 3: Animation end - 3 seconds
 				setAnimationPhase('end_anim')
@@ -158,7 +155,7 @@ export default function RiveLoader({ onRiveDisplayed, onAnimationComplete, isPre
 			console.info('📦 Preload completed - checking if we can speed up idle animation')
 
 			const idleDuration = Date.now() - idleStartTime
-			const minimumIdleDuration = 3000
+			const minimumIdleDuration = 300 // Minimum 0.3 seconds in idle (drastically reduced)
 
 			// If we've already waited the minimum and everything is loaded, trigger end animation immediately
 			if (idleDuration >= minimumIdleDuration && document.readyState === 'complete') {
@@ -210,30 +207,6 @@ export default function RiveLoader({ onRiveDisplayed, onAnimationComplete, isPre
 						height: '120vh',
 					}}
 				/>
-				<div className="absolute bottom-10 left-1/2 hidden -translate-x-1/2 lg:block">
-					<GlassElement width={350} height={180} radius={50} depth={10} blur={2} chromaticAberration={5}>
-						<div className="relative flex h-full w-full flex-col items-center justify-end gap-4 pb-5 text-center">
-							<AnimationExplanation />
-							<div className="absolute bottom-4 left-1/2 -translate-x-1/2">
-								<div className="flex items-center gap-2">
-									<p className="text-sm text-white">Loading...</p>
-								</div>
-							</div>
-						</div>
-					</GlassElement>
-				</div>
-				<div className="absolute bottom-24 left-1/2 block -translate-x-1/2 lg:hidden">
-					<GlassElement width={300} height={150} radius={50} depth={10} blur={2} chromaticAberration={5}>
-						<div className="relative flex h-full w-full flex-col items-center justify-end gap-4 pb-5 text-center">
-							<AnimationExplanation />
-							<div className="absolute bottom-4 left-1/2 -translate-x-1/2">
-								<div className="flex items-center gap-2">
-									<p className="text-sm text-white">Loading...</p>
-								</div>
-							</div>
-						</div>
-					</GlassElement>
-				</div>
 			</div>
 		</div>
 	)

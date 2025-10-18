@@ -1,0 +1,72 @@
+# Node modules (critial - 768 dossiers chez toi)
+node_modules/
+.pnpm-store/
+
+# Build outputs
+.next/
+out/
+dist/
+build/
+.turbo/
+
+# Cache
+.cache/
+.parcel-cache/
+.eslintcache
+.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# Git (347MB chez toi)
+.git/
+
+# Binaires natifs (Next.js, Sharp, Tailwind, etc.)
+*.node
+*.wasm
+*.so
+*.dylib
+*.dll
+*.exe
+
+# Médias (TES VIDÉOS MP4 NOTAMMENT)
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+*.mp3
+*.wav
+*.flac
+*.pdf
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Images lourdes (si nécessaire, commente si tu veux indexer)
+# *.png
+# *.jpg
+# *.jpeg
+# *.gif
+# *.webp
+
+# Fonts
+*.woff
+*.woff2
+*.ttf
+*.eot
+*.otf
+
+# Logs et DBs
+*.log
+*.sqlite
+*.sqlite3
+*.db
+
+# IDE
+# .vscode/
+.idea/
+
+# Autres
+.DS_Store
+*.swp
+coverage/
