@@ -16,7 +16,7 @@
 	"dependencies": {
 		"@next/eslint-plugin-next": "15.5.12",
 		"@rive-app/react-canvas": "4.27.0",
-		"@rive-app/react-webgl2": "4.26.2",
+		"@rive-app/react-webgl2": "4.27.0",
 		"@tanstack/eslint-plugin-query": "5.91.4",
 		"eslint-config-prettier": "10.1.8",
 		"eslint-plugin-jsx-a11y": "6.10.2",
