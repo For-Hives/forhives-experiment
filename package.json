@@ -24,7 +24,7 @@
 		"eslint-plugin-prettier": "5.5.5",
 		"eslint-plugin-promise": "7.2.1",
 		"eslint-plugin-react-hooks": "5.2.0",
-		"espree": "10.4.0",
+		"espree": "11.1.1",
 		"flubber": "0.4.2",
 		"framer-motion": "^12.23.24",
 		"motion": "12.34.2",
