@@ -14,7 +14,7 @@
 		"tsc:watch": "tsc --noEmit --watch"
 	},
 	"dependencies": {
-		"@next/eslint-plugin-next": "15.5.15",
+		"@next/eslint-plugin-next": "16.2.4",
 		"@rive-app/react-canvas": "4.28.2",
 		"@rive-app/react-webgl2": "4.28.1",
 		"@tanstack/eslint-plugin-query": "5.100.1",
@@ -28,7 +28,7 @@
 		"flubber": "0.4.2",
 		"framer-motion": "^12.23.24",
 		"motion": "12.38.0",
-		"next": "15.5.15",
+		"next": "16.2.4",
 		"prettier": "3.8.3",
 		"prettier-plugin-tailwindcss": "0.7.1",
 		"react": "19.2.5",
@@ -45,7 +45,7 @@
 		"@typescript-eslint/eslint-plugin": "8.59.0",
 		"@typescript-eslint/parser": "8.59.0",
 		"eslint": "9.39.4",
-		"eslint-config-next": "15.5.15",
+		"eslint-config-next": "16.2.4",
 		"eslint-plugin-perfectionist": "4.15.1",
 		"jsdom": "26.1.0",
 		"tailwindcss": "4.2.4",
