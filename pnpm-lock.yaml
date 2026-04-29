@@ -15,8 +15,8 @@ importers:
         specifier: 4.28.3
         version: 4.28.3(react@19.2.5)
       '@rive-app/react-webgl2':
-        specifier: 4.28.2
-        version: 4.28.2(react@19.2.5)
+        specifier: 4.28.3
+        version: 4.28.3(react@19.2.5)
       '@tanstack/eslint-plugin-query':
         specifier: 5.100.5
         version: 5.100.5(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
@@ -460,13 +460,13 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0
 
-  '@rive-app/react-webgl2@4.28.2':
-    resolution: {integrity: sha512-LbY10eCZiht8ik1fkton1lVTTakPtpPVYSZfHYjxWI07x3hw7OpEiETkQ8OcXhKGRTfjaPosZB5DvnWqWvaD/Q==}
+  '@rive-app/react-webgl2@4.28.3':
+    resolution: {integrity: sha512-vHMmrNDd2vxKNWy2z0Mfn28dN13yXLdEAlf0JGCdZTIXsf1XipvP7hYrEFsvdD/IleF236FxZCRkGRVpx/YJzg==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0
 
-  '@rive-app/webgl2@2.37.4':
-    resolution: {integrity: sha512-7RPKURqHbwVGOBMwbyVosKMZ+6D2Idf3RXQz4hnEpG9xb9uRUVUw/+5AMADkOJ2qI+ZDwmBscGGkJEg3c4b4fw==}
+  '@rive-app/webgl2@2.37.5':
+    resolution: {integrity: sha512-HvzjvComnOh1pns/BIGbnrZglNxNov5yhmpWO2+i6jlrbV8uovgAWlNm4HTmt+X6eKDrnh8x6G236ABXIqoORQ==}
 
   '@rtsao/scc@1.1.0':
     resolution: {integrity: sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==}
@@ -2602,12 +2602,12 @@ snapshots:
       '@rive-app/canvas': 2.37.5
       react: 19.2.5
 
-  '@rive-app/react-webgl2@4.28.2(react@19.2.5)':
+  '@rive-app/react-webgl2@4.28.3(react@19.2.5)':
     dependencies:
-      '@rive-app/webgl2': 2.37.4
+      '@rive-app/webgl2': 2.37.5
       react: 19.2.5
 
-  '@rive-app/webgl2@2.37.4': {}
+  '@rive-app/webgl2@2.37.5': {}
 
   '@rtsao/scc@1.1.0': {}
 
