@@ -17,7 +17,7 @@
 		"@next/eslint-plugin-next": "15.5.15",
 		"@rive-app/react-canvas": "4.28.3",
 		"@rive-app/react-webgl2": "4.28.3",
-		"@tanstack/eslint-plugin-query": "5.100.8",
+		"@tanstack/eslint-plugin-query": "5.100.9",
 		"eslint-config-prettier": "10.1.8",
 		"eslint-plugin-jsx-a11y": "6.10.2",
 		"eslint-plugin-no-only-tests": "3.4.0",
