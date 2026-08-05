@@ -27,7 +27,7 @@
     "espree": "10.4.0",
     "flubber": "0.4.2",
     "framer-motion": "^12.39.0",
-    "motion": "12.43.0",
+    "motion": "13.0.0",
     "next": "15.5.22",
     "prettier": "3.9.6",
     "prettier-plugin-tailwindcss": "0.8.0",
