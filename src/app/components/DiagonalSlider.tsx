@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ReactNode, CSSProperties } from 'react'
-import { motion } from 'motion/react'
 
+import { motion } from 'motion/react'
 import Image from 'next/image'
 
 import ShaderCanvas from './ShaderCanvas'

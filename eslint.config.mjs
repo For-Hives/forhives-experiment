@@ -1,27 +1,23 @@
-import reactHooksPlugin from 'eslint-plugin-react-hooks'
-
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
+import nextCoreWebVitals from 'eslint-config-next/core-web-vitals'
 import noOnlyTestsPlugin from 'eslint-plugin-no-only-tests'
+import nextTypescript from 'eslint-config-next/typescript'
+import reactHooksPlugin from 'eslint-plugin-react-hooks'
 import queryPlugin from '@tanstack/eslint-plugin-query'
 import perfectionist from 'eslint-plugin-perfectionist'
 import tsPlugin from '@typescript-eslint/eslint-plugin'
 import jsxA11yPlugin from 'eslint-plugin-jsx-a11y'
 import promisePlugin from 'eslint-plugin-promise'
 import tsParser from '@typescript-eslint/parser'
-import { FlatCompat } from '@eslint/eslintrc'
-import { fileURLToPath } from 'url'
 import * as espree from 'espree'
-import { dirname } from 'path'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
-
-const compat = new FlatCompat({
-	baseDirectory: __dirname,
-})
-
-// Configuration commune des règles (Next.js rules are included by compat.extends)
+// Configuration commune des règles (les règles Next.js viennent de eslint-config-next)
 const baseRules = {
+	// Règles du compilateur React arrivées avec eslint-plugin-react-hooks 7 : elles signalent
+	// l'API Rive (on écrit dans input.value, objet renvoyé par useStateMachineInput) et les
+	// setState lancés dans les effets de RiveLoader, qui fonctionnent tels quels.
+	'react-hooks/set-state-in-effect': 'off',
+	'react-hooks/immutability': 'off',
 	'react-hooks/exhaustive-deps': 'off',
 	'promise/always-return': 'off',
 	'prettier/prettier': 'error',
@@ -46,31 +42,25 @@ const perfectionistRules = {
 		{
 			type: 'line-length',
 			order: 'desc',
-			newlinesBetween: 'always',
+			newlinesBetween: 1,
 			internalPattern: ['@/app/.*', '@/components/.*', '@/lib/.*', '@/models/.*', '@/services/.*', '@/constants/.*'],
 			groups: [
 				'type',
 				'react',
 				'nanostores',
 				['builtin', 'external'],
-				'internal-type',
+				'type-internal',
 				'internal',
-				['parent-type', 'sibling-type', 'index-type'],
+				['type-parent', 'type-sibling', 'type-index'],
 				['parent', 'sibling', 'index'],
 				'side-effect',
 				'style',
-				'object',
 				'unknown',
 			],
-			customGroups: {
-				value: {
-					react: ['react', 'react-*'],
-					nanostores: '@nanostores/.*',
-				},
-				type: {
-					react: 'react',
-				},
-			},
+			customGroups: [
+				{ groupName: 'react', elementNamePattern: ['^react$', '^react-.+'] },
+				{ groupName: 'nanostores', elementNamePattern: '^@nanostores/' },
+			],
 		},
 	],
 	'perfectionist/sort-enums': [
@@ -82,7 +72,7 @@ const perfectionistRules = {
 	],
 }
 
-// Plugins communs (without @next/next as it's already included by compat.extends)
+// Plugins communs (sans @next/next, déjà fourni par eslint-config-next)
 const basePlugins = {
 	reactHooks: reactHooksPlugin,
 	perfectionist,
@@ -98,7 +88,8 @@ const baseParserOptions = {
 }
 
 const eslintConfig = [
-	...compat.extends('next/core-web-vitals', 'next/typescript'),
+	...nextCoreWebVitals,
+	...nextTypescript,
 	{
 		ignores: ['node_modules/**', '.next/**', 'out/**', 'build/**', 'next-env.d.ts'],
 	}, //	perfectionist.configs['recommended-natural'],
@@ -134,10 +125,8 @@ const eslintConfig = [
 			'@typescript-eslint/no-unnecessary-type-assertion': 'error',
 			'@typescript-eslint/no-explicit-any': 'error',
 		},
-		plugins: {
-			'@typescript-eslint': tsPlugin,
-			...basePlugins,
-		},
+		// Le plugin @typescript-eslint est déjà déclaré par eslint-config-next/typescript
+		plugins: basePlugins,
 		languageOptions: {
 			parserOptions: {
 				...baseParserOptions,
