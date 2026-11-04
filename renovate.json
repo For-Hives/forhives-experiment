@@ -8,6 +8,11 @@
 			"automerge": true,
 			"automergeType": "pr",
 			"automergeStrategy": "squash"
+		},
+		{
+			"description": "TypeScript 7 (tsgo natif) : typescript-eslint 8 refuse TS 7.0 et Next 15/16 n'arrive plus à charger next.config.ts (« Cannot read properties of undefined (reading 'fileExists') »). Rester en 5.x tant que l'écosystème ne suit pas.",
+			"matchPackageNames": ["typescript"],
+			"allowedVersions": "<7"
 		}
 	]
 }
