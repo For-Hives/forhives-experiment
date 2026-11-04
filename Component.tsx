@@ -5,8 +5,8 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ReactNode, CSSProperties } from 'react'
-import { motion } from 'framer-motion'
 
+import { motion } from 'framer-motion'
 import Image from 'next/image'
 
 // Global configuration for the "electric arc" divider. Tweak values here.
