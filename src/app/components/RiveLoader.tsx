@@ -1,7 +1,8 @@
 'use client'
 
-import { Fit, Layout, useRive, useStateMachineInput } from '@rive-app/react-canvas'
 import { useEffect, useState } from 'react'
+
+import { Fit, Layout, useRive, useStateMachineInput } from '@rive-app/react-canvas'
 
 interface RiveLoaderProps {
 	onAnimationComplete?: () => void

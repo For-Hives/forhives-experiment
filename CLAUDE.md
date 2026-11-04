@@ -18,7 +18,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architecture
 
-This is a Next.js 15 application using the App Router architecture:
+This is a Next.js 16 application using the App Router architecture:
 
 - **Framework**: Next.js with App Router (pages in `src/app/`)
 - **Styling**: Tailwind CSS with Tailwind v4
